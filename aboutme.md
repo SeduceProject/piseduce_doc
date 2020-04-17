@@ -1,16 +1,8 @@
 ---
 layout: page
-title: About me
-subtitle: Why you'd want to go on a date with me
+title: About the PiSeduce Project
+subtitle: A research project to build an edge computing platform
 ---
 
-My name is Inigo Montoya. I have the following qualities:
-
-- I rock a great mustache
-- I'm extremely loyal to my family
-
-What else do you need?
-
-### my history
-
-To be honest, I'm having some trouble remembering right now, so why don't you just watch [my movie](http://en.wikipedia.org/wiki/The_Princess_Bride_%28film%29) and it will answer **all** your questions.
+The PiSeduce cluster is hosted at the Nantes&nbsp;campus of the IMT-Atlantique in France. It is part of the
+research activities of the <a href="http://stack.inria.fr/" target="_blank">STACK team</a> about infrastructures for edge/fog computing. The leader of the PiSeduce project is Jean-Marc Menaud, Professor at IMT-Atlantique.

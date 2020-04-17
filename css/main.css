@@ -184,6 +184,7 @@ img {
 .navbar-custom .avatar-container .avatar-img {
   width: 100%;
   border-radius: 50%;
+  background-color: #404040;
   display: block;
 }
 
