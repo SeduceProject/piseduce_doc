@@ -21,9 +21,9 @@ description: A Rasperry cluster to study edge computing
 # List of links in the navigation bar
 navbar-links:
   Resources:
-    - User Guide: "/category/user/index.html"
+    - User Guide: "/category/user-guide/index.html"
     - Administration: "/category/administration/index.html"
-    - Behind the scene: "/category/behind-the-scene/index.html"
+    - Behind the scenes: "/category/behind-the-scenes/index.html"
     - Communication: "/category/communication/index.html"
   About: "aboutme"
 

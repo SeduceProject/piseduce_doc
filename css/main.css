@@ -787,3 +787,61 @@ pre {
   font-style: italic;
   font-size: 16px;
 }
+
+/* Additional CSS style for PiSeduce */
+/* Footer links inside the post layout */
+.related-posts {
+    border-top: 1px solid #eee;
+}
+
+.nav-buttons, .other-posts {
+    display: inline-block;
+    box-sizing: border-box;
+}
+
+.nav-buttons div {
+    width: 180px;
+    height: 50px;
+    margin-bottom: 5px;
+    padding-top: 15px;
+    background-color: #FFF;
+    border-radius: 0;
+    border: 1px solid #DDD;
+    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-align: center;
+    color: #404040;
+}
+
+.nav-buttons div:hover {
+    color: #FFF;
+    border: 1px solid #0085A1;
+    background-color: #0085A1;
+}
+
+.other-posts div {
+    padding-left: 30px;
+    position: relative;
+    top: 16px;
+}
+
+.other-posts a {
+    font-weight: 200;
+    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: #404040;
+}
+
+/* Markdown style */
+img[src~="bordered"] {
+   border-top: 6px solid #eee;
+   border-bottom: 4px solid #eee;
+   border-left: 1px solid #eee;
+   border-right: 1px solid #eee;
+}
+
+ul {
+  margin-top: -20px;
+}

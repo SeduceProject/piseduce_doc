@@ -4,39 +4,26 @@ title: Brief Explanation of the Deployment Process
 subtitle: Demystifying Deployment States
 category: User Guide
 ---
+When users reserve Raspberry Pis, called nodes, the PiSeduce resource manager deploys an environment on the selected
+nodes. This deployment requires a sequence of steps that is executed to install and configure all the environments.
+Every step has a name to identify the operation in progress. The sequence of operations can change with the updates but
+the main process is the following:
+* At first, the manager turns on the node to start it using PXE network boot. The first boot is over a NFS filesystem.
+  The manager waits for the SSH connection is enabled.
+* From the SSH connection, the image of the operating system to install is written to the SD card. Then, the data
+  partition on the SD card is increased. During this step, the partition is deleted and a bigger one is created.
+* Now, the system is ready to be customized. The manager configures account passwords and SSH access by copying SSH
+  keys. By default, the SSH public key is installed on your environment.
+* The last step is the execution of the user script and environment specific checks can be performed to test the proper
+  functionning of the installed softwares.
 
-To be, or not to be--that is the question:
-Whether 'tis nobler in the mind to suffer
-The slings and arrows of outrageous fortune
-Or to take arms against a sea of troubles
-And by opposing end them. To die, to sleep--
-No more--and by a sleep to say we end
-The heartache, and the thousand natural shocks
-That flesh is heir to. 'Tis a consummation
-Devoutly to be wished. To die, to sleep--
-To sleep--perchance to dream: ay, there's the rub,
-For in that sleep of death what dreams may come
-When we have shuffled off this mortal coil,
-Must give us pause. There's the respect
-That makes calamity of so long life.
-For who would bear the whips and scorns of time,
-Th' oppressor's wrong, the proud man's contumely
-The pangs of despised love, the law's delay,
-The insolence of office, and the spurns
-That patient merit of th' unworthy takes,
-When he himself might his quietus make
-With a bare bodkin? Who would fardels bear,
-To grunt and sweat under a weary life,
-But that the dread of something after death,
-The undiscovered country, from whose bourn
-No traveller returns, puzzles the will,
-And makes us rather bear those ills we have
-Than fly to others that we know not of?
-Thus conscience does make cowards of us all,
-And thus the native hue of resolution
-Is sicklied o'er with the pale cast of thought,
-And enterprise of great pitch and moment
-With this regard their currents turn awry
-And lose the name of action. -- Soft you now,
-The fair Ophelia! -- Nymph, in thy orisons
-Be all my sins remembered.
+If the process hangs on one of the states during deployments, users can try to hard reboot their nodes. The *Hard
+Reboot* operation turns off and on the node. When the node has been rebooted, the deployment starts again in the last
+registered state before rebooting. If the *Hard Reboot* do not fix the deployment, users can use the *Deploy
+Again* operation. The latter start the deployment process again from the beginning.
+**NOTE**: If users are nodes in the *initialized* state, they have to destroy their deployment. While nodes are in the *initialized* state, the owner of the nodes and the other users can not use the nodes. These nodes are reserved but the deployment form has not been sent. This state appears in the following case:
+* From the home page, users select nodes and go to the deployment form by clicking on the *Deploy* button
+* Users go back to the previous page (the home page) without using the *Cancel* button, they use the *Previous Page* button of their navigator.
+
+**Why is this happening ?**  
+To avoid the user *Paul* takes the nodes of the user *John* while this one is filling the deployment form, the resource manager puts nodes of the user *John* in the *initialized* state. So *Paul* can not reserve the *John*'s nodes.
