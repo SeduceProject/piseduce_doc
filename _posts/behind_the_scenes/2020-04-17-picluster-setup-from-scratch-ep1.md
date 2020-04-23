@@ -3,6 +3,7 @@ layout: post
 title: Create your PiSeduce Cluster from Scratch - Episode 1
 subtitle: Hardware Shopping List to Make a PiCluster
 category: Behind the Scenes
+index: 1
 ---
 To be, or not to be--that is the question:
 Whether 'tis nobler in the mind to suffer

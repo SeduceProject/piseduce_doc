@@ -3,6 +3,7 @@ layout: post
 title: Brief Explanation of the Deployment Process
 subtitle: Demystifying Deployment States
 category: User Guide
+index: 42
 ---
 When users reserve Raspberry Pis, called nodes, the PiSeduce resource manager deploys an environment on the selected
 nodes. This deployment requires a sequence of steps that is executed to install and configure all the environments.

@@ -3,6 +3,7 @@ layout: post
 title: Create your PiSeduce Cluster from Scratch - Episode 2
 subtitle: Configure the Software Stack
 category: Behind the Scenes
+index: 2
 ---
 To be, or not to be--that is the question:
 Whether 'tis nobler in the mind to suffer

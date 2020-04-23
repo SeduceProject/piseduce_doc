@@ -9,26 +9,30 @@ layout: base
     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 
       {% if page.gh-repo %}
-        {% assign gh_split =  page.gh-repo | split:'/'  %}
-        {% assign gh_user =  gh_split[0]  %}
-        {% assign gh_repo =  gh_split[1]  %}
+      {% assign gh_split =  page.gh-repo | split:'/'  %}
+      {% assign gh_user =  gh_split[0]  %}
+      {% assign gh_repo =  gh_split[1]  %}
 
-        <div id="header-gh-btns">
-          {% if page.gh-badge.size > 0 %}
-            {% for badge in page.gh-badge %}
-              {% case badge %}
-                {% when 'star'%}
-                  <iframe src="https://ghbtns.com/github-btn.html?user={{ gh_user }}&repo={{ gh_repo }}&type=star&count=true" frameborder="0" scrolling="0" width="120px" height="20px"></iframe>
-                {% when 'watch'%}
-                  <iframe src="https://ghbtns.com/github-btn.html?user={{ gh_user }}&repo={{ gh_repo }}&type=watch&v=2&count=true" frameborder="0" scrolling="0" width="120px" height="20px"></iframe>
-                {% when 'fork'%}
-                  <iframe src="https://ghbtns.com/github-btn.html?user={{ gh_user }}&repo={{ gh_repo }}&type=fork&count=true" frameborder="0" scrolling="0" width="120px" height="20px"></iframe>
-                {% when 'follow'%}
-                  <iframe src="https://ghbtns.com/github-btn.html?user={{ gh_user }}&type=follow&count=true" frameborder="0" scrolling="0" width="220px" height="20px"></iframe>
-              {% endcase %}
-            {% endfor %}
-          {% endif %}
-        </div>
+      <div id="header-gh-btns">
+        {% if page.gh-badge.size > 0 %}
+        {% for badge in page.gh-badge %}
+        {% case badge %}
+        {% when 'star'%}
+        <iframe src="https://ghbtns.com/github-btn.html?user={{ gh_user }}&repo={{ gh_repo }}&type=star&count=true"
+          frameborder="0" scrolling="0" width="120px" height="20px"></iframe>
+        {% when 'watch'%}
+        <iframe src="https://ghbtns.com/github-btn.html?user={{ gh_user }}&repo={{ gh_repo }}&type=watch&v=2&count=true"
+          frameborder="0" scrolling="0" width="120px" height="20px"></iframe>
+        {% when 'fork'%}
+        <iframe src="https://ghbtns.com/github-btn.html?user={{ gh_user }}&repo={{ gh_repo }}&type=fork&count=true"
+          frameborder="0" scrolling="0" width="120px" height="20px"></iframe>
+        {% when 'follow'%}
+        <iframe src="https://ghbtns.com/github-btn.html?user={{ gh_user }}&type=follow&count=true" frameborder="0"
+          scrolling="0" width="220px" height="20px"></iframe>
+        {% endcase %}
+        {% endfor %}
+        {% endif %}
+      </div>
       {% endif %}
 
       <article role="main" class="blog-post">
@@ -37,38 +41,44 @@ layout: base
 
       <div class="related-posts">
         <div class="nav-buttons">
-            <a href="/category/{{ page.category | slugify }}/index.html">
-                <div>{{ page.category }}</div>
-            </a>
-            <a href="/">
-                <div>Home</div>
-            </a>
+          <a href="/category/{{ page.category | slugify }}/index.html">
+            <div>{{ page.category }}</div>
+          </a>
+          <a href="/">
+            <div>Home</div>
+          </a>
         </div>
         <div class="other-posts">
-            <div>
-                <h4>Other interesting posts in the same category</h4>
-            {% assign selected_posts = site.categories[page.category] | sample:3 %}
+          <div>
+            <h4>Other interesting posts in the same category</h4>
+            {% assign other_posts = site.categories[page.category] | where_exp: "post", "post.title != page.title" %}
+            {% assign selected_posts = other_posts | sample: 3 %}
+            {% assign remainder = 3 %}
+            {% assign remainder = remainder | minus: selected_posts.size %}
             {% for post in selected_posts %}
-                <a href="{{ post.url | relative_url }}">{{ post.title }}</a><br/>
+            <a href="{{ post.url | relative_url }}">{{ post.title }}</a><br />
             {% endfor %}
-            </div>
+            {% for br in (1..remainder) %}
+            <br />
+            {% endfor %}
+          </div>
         </div>
       </div>
       {% if page.tags.size > 0 %}
-        <div class="blog-tags">
-          Tags:
-          {% if site.link-tags %}
-          {% for tag in page.tags %}
-            <a href="{{ '/tags' | relative_url }}#{{- tag -}}">{{- tag -}}</a>
-          {% endfor %}
-          {% else %}
-            {{ page.tags | join: ", " }}
-          {% endif %}
-        </div>
+      <div class="blog-tags">
+        Tags:
+        {% if site.link-tags %}
+        {% for tag in page.tags %}
+        <a href="{{ '/tags' | relative_url }}#{{- tag -}}">{{- tag -}}</a>
+        {% endfor %}
+        {% else %}
+        {{ page.tags | join: ", " }}
+        {% endif %}
+      </div>
       {% endif %}
 
       {% if page.social-share %}
-        {% include social-share.html %}
+      {% include social-share.html %}
       {% endif %}
 
     </div>

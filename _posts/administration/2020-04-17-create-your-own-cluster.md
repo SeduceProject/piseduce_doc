@@ -2,7 +2,8 @@
 layout: post
 title: Set up your own PiSeduce cluster
 subtitle: Quick Boostrap your Raspberry Pi Cluster
-category: Administration 
+category: Administration
+index: 42 
 ---
 
 To be, or not to be--that is the question:

@@ -3,6 +3,7 @@ layout: post
 title: Offer Users New Environments
 subtitle: Create Raspberry Operating System Images
 category: Administration
+index: 3
 ---
 
 To be, or not to be--that is the question:

@@ -1,8 +1,9 @@
 ---
 layout: post
 title: First Use of the Resource Manager
-subtitle: Deploy an environment on Raspberry Pi
+subtitle: Deploy environments on Raspberry Pi
 category: User Guide
+index: 0
 ---
 
 To access to the resource manager, users must create an account. After signing in, the resource manager page comes up.

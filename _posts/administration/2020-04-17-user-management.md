@@ -3,6 +3,7 @@ layout: post
 title: User Management
 subtitle: Manage User Access Rights to the Resource Manager
 category: Administration
+index: 0
 ---
 To be, or not to be--that is the question:
 Whether 'tis nobler in the mind to suffer
