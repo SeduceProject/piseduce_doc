@@ -18,7 +18,8 @@ This image file can be used as an environment to deploy on nodes. This action ex
 
 Therefore, the size occupied by the partitions has to be as small as possible for two reasons:
 * The size of the environment image will be smaller, and so, the deployment time will be reduced
-* This operation needs to create an additional partition that has to be large enough to store the whole existing data
+* *Save&nbsp;Environment* actions need to create an additional partition that has to be large enough to store the whole
+  existing data
 
 In order to limit the partition size, users can reduce the free space available on the node file system by using the
 *Additional&nbsp;Free&nbsp;Space* field of the deployment form. To fill this field, users have to estimate the required
@@ -26,4 +27,10 @@ free space for installing new packages.
 **WARNING**: Users can not use *Save&nbsp;Environment* actions when *Additional&nbsp;Free&nbsp;Space* is set to
 *Whole&nbsp;SD_CARD*. In this configuration, the operating system partitions occupy all the storage space.
 
-After *Save Environment* actions, the new environment will be available with the default environments.
+After the *Save Environment* action, the new environment will be available with the default environments.
+
+Another way of customizing deployment environments is to mount the default operating system image, for example, the
+[Raspbian image](https://www.raspberrypi.org/downloads/raspbian/){:target="_blank"} to a local directory. Then, by using
+the chroot command, users can install or configure packages. After modifying the operating system image, users must
+contact their administrator to install it in the resource manager. A full guide is available
+[here](/2020-04-24-customize-environment-images).

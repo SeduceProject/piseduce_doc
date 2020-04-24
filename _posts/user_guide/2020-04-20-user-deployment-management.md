@@ -27,7 +27,7 @@ Moreover, in this panel, users can perform the following actions on nodes:
 * *Deploy again* means the deployment of the environment will be start again from the beginning for the selected node
   only
 * *Save Environment* means the partitions of the selected node will be dumped to an image file that could be deployed on
-  nodes in the future deployments. Please read [this article](/2020-04-17-create-your-own-environments) before
+  nodes in the future deployments. Please read [this article](/2020-04-23-create-your-own-environments) before
   executing this action.
 
 Both the *Hard Reboot* and the *Deploy again* actions can be used when user deployments are stucked or have failed. If
