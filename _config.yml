@@ -209,6 +209,7 @@ link-tags: true
 
 # Exclude these files from production site
 exclude:
+  - check-dead-links.sh
   - CHANGELOG.md
   - CNAME
   - Dockerfile
