@@ -88,5 +88,5 @@ We have finished making changes of the Raspbian image.
 exit
 umount mount_dir
 ```
-Do not forget to compress the new system image with the `gzip` utility before adding it to the resource manager. To
-register the environment, follow this [guideline](/2020-04-23-add-default-environments).
+Do not forget to compress the new system image with the `tar` utility and the gzip compression option `-z` before adding
+it to the resource manager. To register the environment, follow this [guideline](/2020-04-23-add-default-environments).
