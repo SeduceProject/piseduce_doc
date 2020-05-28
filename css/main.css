@@ -845,3 +845,7 @@ img[src~="bordered"] {
 ul {
   margin-top: -20px;
 }
+
+li > ul {
+  margin-top: 0;
+}
