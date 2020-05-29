@@ -90,3 +90,9 @@ umount mount_dir
 ```
 Do not forget to compress the new system image with the `tar` utility and the gzip compression option `-z` before adding
 it to the resource manager. To register the environment, follow this [guideline](/2020-04-23-add-default-environments).
+
+### Environment images for Raspberry Pi 3
+The interesting feature of the Raspberry Pi 3 is the network boot is enabled by default. Indeed, if the Pi&nbsp;3 does
+not find the `bootcode.bin` file at the boot time, it initiates the PXE boot sequence. So, one way to ensure the
+Raspberry always starts the network boot sequence is to modify each environment images to remove the `bootcode.bin`.
+This file belongs to the first partition of system images, also called, the boot partition.

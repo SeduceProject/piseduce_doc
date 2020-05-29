@@ -31,7 +31,7 @@ The beginning of the administration page is reserved to the user management:
 
 ![alt User Management](/img/admin_user_management.png# bordered)
 
-From this page, administrators can see :
+From this page, administrators can see:
 * In the *User Pending Requests* section, the users who are waiting for the validation of their account by
   administrators. The *Email* column indicates whether or not the email has been verified.
 * In the *Authorized Users* section, the users who are authorized to log in the resource manager. These users can deploy

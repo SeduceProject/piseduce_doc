@@ -233,6 +233,7 @@ prose:
     - /css
     - /img
     - /js
+    - /public_data
   metadata:
     _posts:
       - name: "layout"

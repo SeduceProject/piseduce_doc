@@ -6,7 +6,10 @@ category: Administration
 index: 2
 ---
 The resource manager configuration includes many files. This can be confusing so, in this article, we try to clarify the
-use of every configuration file. The first configuration file is the `seducepp.conf` file which has to be located in the
+use of every configuration file.
+
+### Configuring the PiSeduce services
+The first configuration file is the `seducepp.conf` file which has to be located in the
 `seduce_pp` directory. This file uses the
 [INI&nbsp;file&nbsp;format](https://en.wikipedia.org/wiki/INI_file){:target="_blank"}:
 ```
@@ -42,25 +45,25 @@ The configuration of log files are described as follow:
   file.
 * the log configuration of the deployment testing tool, `test_deployment.py`, is in the `logging-test.conf` file.
 
+### Describing the PiSeduce cluster
 The other configuration files are *JSON* files. There are located in the `cluster_desc` directory. The `main.json`
 defines different global propeties:
 ```
 {
     "pimaster": {
-        "ip": "192.168.122.236",
+        "ip": "192.168.0.2",
         "user": "pipi"
     },  
     "switch": {
-        "ip": "192.168.1.23",
+        "ip": "192.168.0.1",
         "snmp_community": "private",
         "snmp_oid": "1.3.6.1.2.1.105.1.1.1.3.1",
         "snmp_oid_offset": 20
     },
     "email_signup": true,
     "email_filters": [
-        "@mines-nantes.fr",
-        "@inria.fr",
-        "@imt-atlantique.fr"
+        "@piseduce.fr",
+        "@seduce.fr"
     ],  
     "comments": "WARNING: Do NOT forget the ending /",
     "env_cfg_dir": "/home/pimanager/seduce_pp/cluster_desc/environments/",
@@ -75,13 +78,24 @@ These properties configure the resource manager as follows:
 * the `switch community` is the SNMP community used in SNMP commands.
 * the `switch snmp_oid_offset` is used to compute the last number of the SNMP OID described below. Indeed, the last
   number of the OID is the sum of this offset and the number of the requested port.
-* the `switch snmp_oid` is the OID used to turn off and on the nodes over SNMP. The sum of the port number of the node
-  and the offset property is appended to this OID to target one specific node. In this example, the command to turn off
-  the node connected to the port 8 with an offset of 20 will be:
+* the `switch snmp_oid` is the OID used to turn off and on the nodes over SNMP. The sum of the node port number plus the
+  offset property is appended to this OID to target one specific port. In this example, the command to turn off the node
+  connected to the port 8 with an offset of 20 will be:
   ```
   snmpset -v2c -c private 192.168.1.23 1.3.6.1.2.1.105.1.1.1.3.1.28 i 2
   ```
-  The last number of the OID is 28 (20+8).
+  The last number of the OID is 28 (20+8). To find this OID, you can try the following command:
+  ```
+  snmpwalk -v2c -c community_name switch_ip  1.3.6.1.2.1.105.1.1.1.3.1
+  ```
+  If the number of lines of the command ouput is equal to the number of ports of your switch, it is your lucky day! Just
+  note the OID of the first line. It is the OID for the PoE management of port number 1. So, the property
+  `snmp_oid_offset` is equal to the last digit of this line minus one. For example, with our switch, the first line of
+  the *snmpwalk* command is:
+  ```
+  iso.3.6.1.2.1.105.1.1.1.3.1.49 = INTEGER: 2
+  ```
+  So, the value of the `snmp_oid_offset` is 48 (49 - 1).
 * the `email_signup` feature authorizes users to sign in when their email address is confirmed. When `email_signup` is
   false, administrators must authorize users to sign in manually. See the
   [user&nbsp;management](/2020-04-24-user-management) guide.
