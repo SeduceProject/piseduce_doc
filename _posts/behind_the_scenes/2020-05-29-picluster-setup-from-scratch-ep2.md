@@ -49,38 +49,28 @@ interface on the choosen Raspberry Pi and update the system:
 ```
 sudo apt update && sudo apt -y dist-upgrade
 ```
-Configure the SSH root access from key authentication by copying your SSH key in the `/root/.ssh/authorized_keys` file
-and log in with the root account.
+Configure the SSH root access from key authentication by copying your SSH key in the `/root/.ssh/authorized_keys` file:
 ```
 sudo nano /root/.ssh/authorized_keys
-```
-Install the required packages (see more details about the packages
-[here](#explanations-concerning-the-additional-packages)):
-```
-apt install dnsmasq git libffi-dev mariadb-client mariadb-server \
-    nfs-kernel-server python3-mysqldb python3-pip pv snmp vim
-```
-As the pislaves use the pimaster as a gateway to the other networks, we need to enable IP forwarding on the pimaster:
-```
-echo 'net.ipv4.ip_forward=1' > /etc/sysctl.conf
-sysctl -p /etc/sysctl.conf
 ```
 We like to change the hostname of the pimaster because the SHELL prompt is modified when we are connected via SSH:
 ```
 echo 'pimaster' > /etc/hostname
 ```
-A reboot is required to change the SHELL prompt.
+A reboot is required to change the SHELL prompt. Log in with the root account to continue the configuration.
 
 ### Configuring the NFS server
 The installation of new environments (operating systems with preconfigured additional packages) on the pislaves is a
 two-steps procedure. The first step is the boot of the pislave over a NFS file system hosted by the pimaster. The second
 step is the configuration of the recently installed operating system.
 
-As the pimaster connects over SSH to the pislaves after their first boot, we need to generate SSH keys for the pimaster:
+We need to install additional packages on the pimaster before cloning its file system. In that way, the installed
+packages will be also available for pislaves which will boot from the NFS file system:
 ```
-ssh-keygen
+apt install pv vim
 ```
-To create the NFS file system on the pimaster, we can make a copy of the existing file system in the directory `/nfs/raspi`:
+To create the NFS file system on the pimaster, we can make a copy of the existing file system in the directory
+`/nfs/raspi`:
 ```
 mkdir -p /nfs/raspi
 rsync -xa --progress --exclude /nfs / /nfs/raspi
@@ -102,7 +92,11 @@ exit
 cat /nfs/raspi/root/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 umount dev sys proc
 ```
-Now, export the file system via the NFS server. Start by editing the file `/etc/exports`:
+Now, we can install the NFS service:
+```
+apt install nfs-kernel-server
+```
+Then, we export the file system via the NFS server. Start by editing the file `/etc/exports`:
 ```
 /nfs *(rw,sync,no_subtree_check,no_root_squash)
 ```
@@ -112,6 +106,19 @@ exportfs -a
 service nfs-kernel-server restart
 # Check the NFS file system is properly configured
 showmount -e
+```
+
+### Install the required services
+As the pimaster file system has been cloned, we can install all the required packages (see more details about the
+packages [here](#explanations-concerning-the-additional-packages)):
+```
+apt install dnsmasq git libffi-dev mariadb-client mariadb-server \
+    nfs-kernel-server python3-mysqldb python3-pip pv snmp vim
+```
+As the pislaves use the pimaster as a gateway to the other networks, we need to enable IP forwarding on the pimaster:
+```
+echo 'net.ipv4.ip_forward=1' > /etc/sysctl.conf
+sysctl -p /etc/sysctl.conf
 ```
 
 ### Preparing TFTP/PXE files
