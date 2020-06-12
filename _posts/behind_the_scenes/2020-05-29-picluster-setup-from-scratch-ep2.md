@@ -92,6 +92,14 @@ exit
 cat /nfs/raspi/root/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 umount dev sys proc
 ```
+We disable the PAM module for the SSH server on the NFS file system. Edit the file '/nfs/raspi/etc/ssh/sshd_config':
+```
+UsePAM no
+```
+And, we increase the size of the swap file by editing the file `/nfs/raspi/etc/dphys-swapfile`:
+```
+CONF_SWAPSIZE=1024
+```
 Now, we can install the NFS service:
 ```
 apt install nfs-kernel-server
