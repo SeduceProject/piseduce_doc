@@ -8,11 +8,12 @@ index: 42
 
 The main hardware requires to set up a PiSeduce cluster is a POE switch and at least eight Raspberry Pis. A more precise
 list of the hardware can be found in this [article](/2020-05-28-picluster-setup-from-scratch-ep1). So, the first step
-consists of connecting the Raspberry Pis to the switch. One of the eight Raspberry Pis will be the pimaster. We
-recommend to choose the Raspberry with the larger amount of memory as the pimaster. This Raspberry will manage the other
-Raspberry Pis by providing operating system images via the PXE protocol and by sending SNMP requests to the switch in
-order to turn off and on the other Raspberry. Consequently, the pimaster must be able to connect to the switch with the
-SNMP protocol with the version 2. Only this Raspberry needs a SNMP connection to the switch.
+consists of connecting the Raspberry Pis to the switch. One of the eight Raspberry Pis will be the pimaster. The other
+Raspberry will be called pislaves. We recommend to choose the Raspberry with the larger amount of memory as the
+pimaster. This Raspberry will manage the other Raspberry Pis by providing operating system images via the PXE protocol
+and by sending SNMP requests to the switch in order to turn off and on the other Raspberry. Consequently, the pimaster
+must be able to connect to the switch with the SNMP protocol with the version 2. Only this Raspberry needs a SNMP
+connection to the switch.
 
 After connecting the Raspberrys to the switch, the SNMP configuration of the switch should be straightforward. Usually,
 the SNMP configuration consists of setting the name of the SNMP community, selecting the version of the protocol to use
@@ -44,10 +45,27 @@ is heavily dependent of the Raspberry Pi model. We already test two models: the 
   `rpi-eeprom-update -d -f netboot-pieeprom.bin`.
 
 Now, we are ready to configure the pimaster. In order to easily configure the pimaster, we build an image file that
-embeds the software stack. Download the image [piseduce.img.tar.gz](http://pi.seduce.fr/) and copy it to a SDCARD: 
-`dd if=piseduce.img of=/dev/sda`. By default, the pimaster uses the static IP *192.168.0.4*. To change the pimaster IP
-address before starting the configuration, edit the file `/etc/dhcpcd.conf` in the second partition of the SDCARD. To
-continue the configuration of the pimaster, connect to its web interface on
+embeds the software stack. Download the image [piseduce.img.tar.gz](http://pi.seduce.fr/) and copy it to a SDCARD: `dd
+if=piseduce.img of=/dev/sda`. By default, the pimaster uses the static IP *192.168.0.4*. The IP configuration can be
+changed from the web interface described below but this change can also be done manually. To change the IP address
+before booting the pimaster, edit the file `/etc/dhcpcd.conf` in the second partition of the SDCARD. The static IP
+configuration is done by the following lines:
+```
+interface eth0
+static ip_address=192.168.0.4/24
+static routers=192.168.1.10
+static domain_name_servers=192.168.1.10
+```
+The `ip_adress` property configures the IP of the pimaster. The `routers` property configures the gateway IP and the
+`domain_name_servers` property configures the domain name servers IP. To use a DHCP server, comment these four lines
+by adding `#` at the beginning of the lines.
+
+To easily connect to the pimaster, your SSH key can be added to the `/root/.ssh/authorized_keys` located on the second
+partition of the SDCARD. Be carefull not to delete this file or the keys inside this file. By default, SSH root access
+is only available from SSH keys. SSH access for the *pi* account uses the password *piseduceadmin*. Do not forget to
+change this password.
+
+To continue the configuration of the pimaster, connect to its web interface on
 [http://pimaster.local:9000](http://pimaster.local:9000).
 
 ![alt pimaster configuration interface](/img/pimaster_configuration_interface.png# bordered)
@@ -69,3 +87,40 @@ user account created during the installation will be called *pipi*.
 After clicking on the *Save Configuration* button, the configuration of the pimaster will start. Logs will be displayed.
 At the end of the configuration, you should be able to connect to the [PiSeduce resource manager
 interface](http://pimaster.local:9000) with the login *admin@piseduce.fr* and the password *piseduceadmin*.
+
+## Only Use Specific Ports of the Switch
+In order to only use a part of the switch ports, you can manually select the ports connected to Raspberry Pis before
+running the configuration script (i.e., before clicking on *Save Configuration*). To do that, connect to the pimaster,
+for example, with the SSH access. Edit the file `/root/seduce_pp/autoconf/files/master-conf-script` and write the list
+of the selected ports in the variable *PORTS*. By default, this variable is set to an empty string. For example, for a
+cluster of three pislaves connected on the ports 3, 6 and 7, modify the variable to:
+```
+# Restrict the switch ports to use.
+PORTS="3 6 7"
+```
+
+## PiSeduce Resource Manager Performance
+To reduce the size of the *piseduce.img* image file, the installed system have limited free space. By default, the
+system will be resized at the first boot. If the `init_resize.sh` script is not run, there is sufficient free
+space to install the resource manager and test it, but, we strongly advise to expand the system partition to avoid
+performance issues. To manually expand the partition, start by increasing the size of the second partition (the SDCARD
+is mounted on /dev/sda):
+```
+fdisk -u /dev/sda
+# Note the first sector of the second partition (the start column)
+p
+# Delete the second partition
+d; 2
+# Create a new second partition that uses all the available space
+n; p; 2; first_sector_nb; ''
+# Save the modification
+w
+```
+Now, resize the expanded partition:
+```
+resize2fs /dev/sda2
+```
+Boot on the SDCARD and check the size of the filesystem:
+```
+df -h
+```
