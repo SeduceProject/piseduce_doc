@@ -20,7 +20,7 @@
       <ul class="nav navbar-nav navbar-right">
       {%- for link in site.navbar-links -%}
         {%- if link[1].first %}
-          <li><a href="{{ '/' | absolute_url }}">home</a></li>
+          <li><a href="{{ '/' }}">home</a></li>
           <li class="navlinks-container">
             <a class="navlinks-parent" href="javascript:void(0)">{{ link[0] }}</a>
             <div class="navlinks-children">
@@ -41,7 +41,7 @@
 	{% if page.image and (layout.show-avatar or page.show-avatar) %}
 	<div class="avatar-container">
 	  <div class="avatar-img-border">
-	    <a href="{{ '/' | absolute_url }}">
+	    <a href="{{ '/' }}">
 	      <img class="avatar-img" src="{{ page.image | relative_url }}" />
 		</a>
 	  </div>
@@ -49,7 +49,7 @@
 	{% elsif site.avatar and (layout.show-avatar or page.show-avatar) %}
 	<div class="avatar-container">
 	  <div class="avatar-img-border">
-	    <a href="{{ '/' | absolute_url }}">
+	    <a href="{{ '/' }}">
 	      <img class="avatar-img" src="{{ site.avatar | relative_url }}" />
 		</a>
 	  </div>
