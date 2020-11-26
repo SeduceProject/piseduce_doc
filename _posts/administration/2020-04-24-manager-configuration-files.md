@@ -46,56 +46,37 @@ The configuration of log files are described as follow:
 * the log configuration of the deployment testing tool, `test_deployment.py`, is in the `logging-test.conf` file.
 
 ### Describing the PiSeduce cluster
-The other configuration files are *JSON* files. There are located in the `cluster_desc` directory. The `main.json`
-defines different global propeties:
+The other configuration files are *JSON* files. There are located in the `cluster_desc` directory. The
+`cluster_desc` is organized as follow:
+* `main.json` describes global properties
+* `switches` directory includes the description of the switches that connects the cluster nodes
+* `nodes` directory includes the description of the cluster nodes
+* `environments` directory includes the description of the environments to deploy on the cluser nodes
+
+Let us begin with the `main.json` that defines the global propeties:
 ```
 {
     "pimaster": {
         "ip": "192.168.0.2",
-        "user": "pipi"
-    },  
-    "switch": {
-        "ip": "192.168.0.1",
-        "snmp_community": "private",
-        "snmp_oid": "1.3.6.1.2.1.105.1.1.1.3.1",
-        "snmp_oid_offset": 20
+        "user": "root"
     },
+    "first_node_ip": "192.168.0.51"
     "email_signup": true,
     "email_filters": [
         "@piseduce.fr",
         "@seduce.fr"
-    ],  
+    ], 
     "comments": "WARNING: Do NOT forget the ending /",
     "env_cfg_dir": "/home/pimanager/seduce_pp/cluster_desc/environments/",
     "img_dir": "/home/pimanager/environments/"
 }
 ```
 These properties configure the resource manager as follows:
-* the `pimaster ip` is the IP of the resource manager that hosts the environment images and the NFS server.
-* the `pimaster user` is the SSH user required by nodes running over the NFS file system to connect to the resource
-  manager.
-* the `switch ip` is the IP of the switch connected to the nodes.
-* the `switch community` is the SNMP community used in SNMP commands.
-* the `switch snmp_oid_offset` is used to compute the last number of the SNMP OID described below. Indeed, the last
-  number of the OID is the sum of this offset and the number of the requested port.
-* the `switch snmp_oid` is the OID used to turn off and on the nodes over SNMP. The sum of the node port number plus the
-  offset property is appended to this OID to target one specific port. In this example, the command to turn off the node
-  connected to the port 8 with an offset of 20 will be:
-  ```
-  snmpset -v2c -c private 192.168.1.23 1.3.6.1.2.1.105.1.1.1.3.1.28 i 2
-  ```
-  The last number of the OID is 28 (20+8). To find this OID, you can try the following command:
-  ```
-  snmpwalk -v2c -c community_name switch_ip  1.3.6.1.2.1.105.1.1.1.3.1
-  ```
-  If the number of lines of the command ouput is equal to the number of ports of your switch, it is your lucky day! Just
-  note the OID of the first line. It is the OID for the PoE management of port number 1. So, the property
-  `snmp_oid_offset` is equal to the last digit of this line minus one. For example, with our switch, the first line of
-  the *snmpwalk* command is:
-  ```
-  iso.3.6.1.2.1.105.1.1.1.3.1.49 = INTEGER: 2
-  ```
-  So, the value of the `snmp_oid_offset` is 48 (49 - 1).
+* the `pimaster ip` is the IP of the pimaster that hosts the PiSeduce resource manager, the DHCP/TFTP server and the NFS
+  server.
+* the `pimaster user` is the SSH user required by nodes running over the NFS file system to connect to the pimaster.
+* the `first_node_ip` is the first IP used by the DHCP server. Obviously, this IP must be in the same network that the
+  pimaster.
 * the `email_signup` feature authorizes users to sign in when their email address is confirmed. When `email_signup` is
   false, administrators must authorize users to sign in manually. See the
   [user&nbsp;management](/2020-04-24-user-management) guide.
@@ -105,52 +86,100 @@ These properties configure the resource manager as follows:
 * the `env_cfg_dir` is the absolute path to the environment configuration file directory.
 * the `img_dir` is the absolute path to the environment image directory.
 
-The configuration files describing the cluster nodes, or cluster resources, are located in the `cluster_desc/nodes`
-directory. There is one configuration file for each node. By convention, the name of the file is `node_name.json`. For
-example, the file `node-10.json`:
+The configuration files describing the switches used by the nodes are located to the `cluster_desc/switches`
+directory. There is one configuration file for each switch. By convention, the name of the file is `switch_name.json`.
+For example, the file `main_24ports.json` describes our 24-port switch:
+```
+{
+    "name": "main_24ports",
+    "ip": "192.168.0.23",
+    "community": "private",
+    "port_nb": 24,
+    "master_port": 3,
+    "oid": "1.3.6.1.2.1.105.1.1.1.3.1",
+    "oid_offset": 20
+}
+```
+These switch properties are used as follows:
+* the `name` of the switch is an **unique** identifier for the switch.
+* the `ip` is the IP of the switch.
+* the `community` is the SNMP community used by SNMP commands.
+* the `port_nb` is the number of ports of the switch.
+* the `master_port` is the port connected to the pimaster. The PoE port of the pimaster can not be switched off. If
+  there is no pimaster on the switch, set the `master_port` to 0.
+* the `oid_offset` is used to compute the last number of the SNMP OID described below. Indeed, the last number of the
+  OID is the sum of this offset and the number of the requested port.
+* the `oid` is the OID used to turn off and on the nodes over SNMP. The sum of the node port number plus the `oid_offset`
+  property is appended to this OID to target one specific port. In this example, the command to turn off the node
+  connected to the port 8 with an offset of 20 will be:
+  ```
+  snmpset -v2c -c private 192.168.1.23 1.3.6.1.2.1.105.1.1.1.3.1.28 i 2
+  ```
+  The last number of the OID is 28 (20+8). To find this OID, you can try the following command:
+  ```
+  snmpwalk -v2c -c community_name switch_ip  1.3.6.1.2.1.105.1.1.1.3.1
+  ```
+  If the number of lines of the command ouput is equal to the number of ports of your switch, it is your lucky day! Just
+  note the OID of the first line. It is the OID for the PoE management of the port number 1. So, the property
+  `oid_offset` is equal to the last digit of this line minus one. For example, with our switch, the first line of
+  the *snmpwalk* command is:
+  ```
+  iso.3.6.1.2.1.105.1.1.1.3.1.49 = INTEGER: 2
+  ```
+  So, the value of the `oid_offset` is 48 (49 - 1).
+
+The configuration files describing the cluster nodes are located in the `cluster_desc/nodes` directory. There is one
+configuration file for each node. By convention, the name of the file is `node_name.json`. For example, the file
+`node-10.json`:
 ```
 {
     "name": "node-10",
-    "id": "5e8fa6a1",
     "port_number": 10, 
     "ip": "192.168.1.60",
-    "model": "RPI3B+",
-    "public_ip": "pi10.picluster.fr",
-    "public_port": "22010"
+    "switch": "main_24ports",
+    "model": "RPI3Bplus",
+    "id": "5e8fa6a1"
 }
 ```
 The node properties are defined as follows:
 * the node `name`, by convention, is *node-port_number*. So the node 10 is connected on the port 10 of the
   switch.
+* the `port_number` that indicates the switch port connected to the node.
+* the `ip` is used to connect from the resource manager.
+* the `switch` is the name of the switch connected to the node.
+* the `model` describes the model of the resources. In this example, *RPI3B+* means *Raspberry Pi 3 model B+*.
 * the node `id` is a hardware property that is used for the PXE boot. This value can be found with the following
   command:
 ```
 cat /proc/cpuinfo | grep "Serial" | awk '{ print substr( $3, length($3) - 7, length($3) ) }'
 ```
-* the `port_number` that indicates the switch port connected to the node.
-* the `ip` is used to connect from the resource manager.
-* the `model` describes the model of the resources. In this example, *RPI3B+* means *Raspberry Pi 3 model B+*.
-* the `public_ip` and the `public_port` are communicated to users so that they can connect to their nodes.
 
 The configuration files of environments which can be deployed by users are located in the `cluster_desc/environments`
-directory. There is one configuration file for each environment. For example, the file `raspbian_buster.json`:
+directory. There is one configuration file for each environment. For example, the file `raspbian_buster_32bit.json`:
 ```
 {
     "type": "default",
-    "name": "raspbian_buster",
-    "img_name": "2020-02-13-raspbian-buster-lite.img.tar.gz",
+    "name": "raspbian_buster_32bit",
+    "desc": [
+        "Raspbian Buster Lite without modification.",
+        "SSH connections are available with passwords for the 'pi' user.",
+        "SSH connections are available with keys for the 'root' user.",
+    ],
+    "img_name": "2020-08-20-raspios-buster-armhf-lite.img.tar.gz",
     "img_size": 1849688064,
     "sector_start": 532480,
     "ssh_user": "root",
     "shell": "bash",
-    "script_test": "echo 'riri\nfifi\nloulou' > /root/picsou.txt",
+    "web": false,
+    "script_test": "echo 'riri\nfifi\nloulou' > /root/picsou.txt"
 }
 ```
 The environment properties are defined as follows:
 * *type*: `default` for environments created from operating system images or `user` for environments creating by copying
   an existing file system. Environments generated by *Save&nbsp;Environment* actions have the `user` type.
 * *name*: the name to identify the environment. This name is used in the list of environments of the deployment form.
-* *img_name*: the name of the image file, for example, `2020-02-13-raspbian-buster-lite.img.tar.gz`.
+* *desc*: the description of the environment that will be displayed in the PiSeduce resource manager web interface.
+* *img_name*: the name of the image file to upload on the Raspberry.
 * *img_size*: the size of the uncompressed image file in bytes. This size is used to display the progress bar during the
   `env_check` deployment state.
 * *sector_start*: the first sector of the second partition of the disk image. This value can be found with the `fdisk`
