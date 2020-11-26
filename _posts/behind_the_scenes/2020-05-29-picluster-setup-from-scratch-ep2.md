@@ -7,7 +7,7 @@ index: 2
 ---
 After connecting all the components, we are ready to start the configuration of the PiSeduce cluster. If you want to
 quickly configure the pimaster without knowing the exact details of the pimaster configuration, see this
-[artcile](/2020-05-27-create-your-own-cluster). The main steps of this configuration are: collecting pislave
+[article](/2020-05-27-create-your-own-cluster). The main steps of this configuration are: collecting pislave
 information, installing management services on the pimaster and installing the PiSeduce resource manager on the
 pimaster. Let us begin with the collect of the information about the pislaves.
 
@@ -40,6 +40,10 @@ port: 3
 mac: B8:27:EB:20:de:45
 id: de23ff56
 ```
+
+## Raspberry Pi Slave Configuration
+The Raspberry Pi use as node of the PiSeduce cluster must boot from PXE. To set up the network boot, follow the
+instructions at the beginning of this [article](/2020-05-27-create-your-own-cluster).
 
 ## Installing management services
 ### Preparing the pimaster operating system
@@ -100,7 +104,7 @@ And, we increase the size of the swap file by editing the file `/nfs/raspi/etc/d
 ```
 CONF_SWAPSIZE=1024
 ```
-Now, we can install the NFS service:
+The NFS file system is ready now. We install the NFS service:
 ```
 apt install nfs-kernel-server
 ```
@@ -131,16 +135,29 @@ sysctl -p /etc/sysctl.conf
 
 ### Preparing TFTP/PXE files
 To manage the pislaves, the pimaster configures pislave PXE boot directories before turning them on. In that way, it can
-choose to boot the pislaves over the NFS file system or from their SDCARD. The content of the PXE boot directories is
-available [here](/public_data/tftpboot.tar.gz). Unzip the archive in the `/tftpboot` directory:
+choose to boot the pislaves over the NFS file system or from their SDCARD. The content of the PXE boot directories
+consists of:
+* boot files to load the kernel
+* home made *bootcode.bin* to start the PXE boot of the Raspberry Pi 3
+* a custom *cmdline.txt* to tell the Raspberry to boot over the NFS file system
+
+Let us begin with the creation of the *tftpboot* directory that includes the boot files:
 ```
 mkdir /tftpboot
-tar xzf tftpboot.tar.gz -C /tftpboot
+cp -r /boot /tftpboot/rpiboot_uboot
+rm /tftpboot/rpiboot_uboot/bootcode.bin /tftpboot/rpiboot_uboot/cmdline.txt
 ```
-Configure the NFS boot by replacing the IP in all `/tftpboot/rpiboot_uboot_*/cmdline.txt` files by the IP of the
-pimaster, e.g., *10.10.0.2*.
+Download the [bootcode.bin file](/public_data/bootcode.bin) to the *tftpboot* directory:
 ```
-nfsroot=10.10.0.2:/nfs/raspi1,udp,v3 rw ip=dhcp root=/dev/nfs rootwait console=tty1 console=ttyAMA0,115200
+cd /tftpboot
+wget https://doc.seduce.fr/public_data/bootcode.bin
+```
+Then, download the [cmdline.txt template](/public_data/cmdline.txt) and edit the file to replace the IP address
+by the IP address of the pimaster:
+```
+cd /tftpboot/rpiboot_uboot/
+wget https://doc.seduce.fr/public_data/cmdline.txt
+vim cmdline.txt
 ```
 
 ### Configuring the DHCP/TFTP server
