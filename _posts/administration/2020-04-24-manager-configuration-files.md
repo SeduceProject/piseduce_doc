@@ -3,12 +3,12 @@ layout: post
 title: The Resource Manager Configuration
 subtitle: Configuration files, environment and node descriptions
 category: Administration
-index: 2
+index: 4
 ---
 The resource manager configuration includes many files. This can be confusing so, in this article, we try to clarify the
 use of every configuration file.
 
-### Configuring the PiSeduce services
+## Configuring the PiSeduce services
 The first configuration file is the `seducepp.conf` file which has to be located in the
 `seduce_pp` directory. This file uses the
 [INI&nbsp;file&nbsp;format](https://en.wikipedia.org/wiki/INI_file){:target="_blank"}:
@@ -45,7 +45,7 @@ The configuration of log files are described as follow:
   file.
 * the log configuration of the deployment testing tool, `test_deployment.py`, is in the `logging-test.conf` file.
 
-### Describing the PiSeduce cluster
+## Describing the PiSeduce cluster
 The other configuration files are *JSON* files. There are located in the `cluster_desc` directory. The
 `cluster_desc` is organized as follow:
 * `main.json` describes global properties
@@ -53,6 +53,8 @@ The other configuration files are *JSON* files. There are located in the `cluste
 * `nodes` directory includes the description of the cluster nodes
 * `environments` directory includes the description of the environments to deploy on the cluser nodes
 
+
+### Global properties
 Let us begin with the `main.json` that defines the global propeties:
 ```
 {
@@ -86,6 +88,7 @@ These properties configure the resource manager as follows:
 * the `env_cfg_dir` is the absolute path to the environment configuration file directory.
 * the `img_dir` is the absolute path to the environment image directory.
 
+### Switch Description
 The configuration files describing the switches used by the nodes are located to the `cluster_desc/switches`
 directory. There is one configuration file for each switch. By convention, the name of the file is `switch_name.json`.
 For example, the file `main_24ports.json` describes our 24-port switch:
@@ -128,6 +131,7 @@ These switch properties are used as follows:
   ```
   So, the value of the `oid_offset` is 48 (49 - 1).
 
+### Node Description
 The configuration files describing the cluster nodes are located in the `cluster_desc/nodes` directory. There is one
 configuration file for each node. By convention, the name of the file is `node_name.json`. For example, the file
 `node-10.json`:
@@ -154,6 +158,7 @@ The node properties are defined as follows:
 cat /proc/cpuinfo | grep "Serial" | awk '{ print substr( $3, length($3) - 7, length($3) ) }'
 ```
 
+### Environment Description
 The configuration files of environments which can be deployed by users are located in the `cluster_desc/environments`
 directory. There is one configuration file for each environment. For example, the file `raspbian_buster_32bit.json`:
 ```

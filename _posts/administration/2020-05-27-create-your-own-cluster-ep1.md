@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Set up your own PiSeduce cluster
+title: Set up your own PiSeduce cluster - Episode 1
 subtitle: Quick Boostrap your Raspberry Pi Cluster
 category: Administration
 index: 42 

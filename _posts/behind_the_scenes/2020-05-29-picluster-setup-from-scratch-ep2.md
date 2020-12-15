@@ -124,8 +124,8 @@ showmount -e
 As the pimaster file system has been cloned, we can install all the required packages (see more details about the
 packages [here](#explanations-concerning-the-additional-packages)):
 ```
-apt install dnsmasq git libffi-dev mariadb-client mariadb-server \
-    nfs-kernel-server python3-mysqldb python3-pip pv snmp vim
+apt install dnsmasq git mariadb-client mariadb-server nfs-kernel-server \
+  python3-mysqldb python3-pip pv snmp tshark vim
 ```
 As the pislaves use the pimaster as a gateway to the other networks, we need to enable IP forwarding on the pimaster:
 ```
@@ -219,33 +219,26 @@ this article so we just have to get the code from github:
 ```
 git clone https://github.com/remyimt/seduce_pp
 ```
-The first thing is to replace the database password *DBPASSWORD* with the password of the *pipi* user in the
+and install the Python modules by using pip3:
+```
+pip3 install -r requirements.txt
+```
+Then, the first thing is to replace the database password *DBPASSWORD* with the password of the *pipi* user in the
 configuration file `seducepp.conf` by modifying the following line:
 ```
 connection_url=mysql://pipi:DBPASSWORD@localhost/piseduce
 ```
-Then, we need to create JSON files to describe your PiSeduce cluster infrastructure. At first, copy the template of the
-`main.json` file to the `cluster_desc` directory:
-```
-cd seduce_pp
-cp autoconf/files/main.json cluster_desc/
-```
-Edit this file and fill it according to your cluster configuration. A complete description of the configuration files is
-available in this [article](/2020-04-24-manager-configuration-files#describing-the-piseduce-cluster){:target="_blank"}.
+We also need to edit the `cluster_desc/main.json` configuration file. Edit this file and fill it according to your
+cluster configuration. A complete description of the configuration files is available in this
+[article](/2020-04-24-manager-configuration-files#describing-the-piseduce-cluster){:target="_blank"}.
 Be carefull, the pathes defined by the properties *env_cfg_dir* and *img_dir* must be absolute paths.
 
-We also need to create one JSON file for every pislave. Copy the template of the node description in the
-`cluster_desc/nodes` directory:
-```
-cp autoconf/files/node-default.json cluster_desc/nodes/nodes-1.json
-```
-Then, fill it with the information about the Raspberry connected to the port number 1. Use the information collected in
-the [first&nbsp;section](#collecting-pislave-information) of this article. Refer to the previous
-[article](/2020-04-24-manager-configuration-files#describing-the-piseduce-cluster) to obtain more information about this
-description file.
+Now, you have to create at least one environment image. This [article](/2020-04-23-add-default-environments/) explains
+you how to do it. Do not forget to add the JSON description files associated to your environments in
+`cluster_desc/environments`.
 
-The configuration of the PiSeduce resource manager is completed. Copy service description files in the
-`/etc/systemd/system` directory and enable them to start at boot:
+Once the environment images are created, the configuration of the PiSeduce resource manager is completed. Copy service
+description files to the `/etc/systemd/system` directory and enable them to start at boot:
 ```
 cp admin/*.service /etc/systemd/system/
 systemctl enable pitasks.service
@@ -261,19 +254,19 @@ service pitasks status
 The *pitasks* service is responsible for deploying the user environments and the *pifrontend* service is the web
 interface of the PiSeduce resource manager. Connect on the port 9000 of the pimaster
 ([http://pimaster.local:9000](http://pimaster.local:9000)) to use the resource manager. The administrator can log in
-with the username *admin@piseduce.fr* and the password *piseduceadmin* to manage the user accounts. See this
-[article](/2020-04-24-user-management) to learn more about user management.
+with the username *admin@piseduce.fr* and the password *piseduceadmin* to manage the cluster.
+
+The next step is to register the nodes on the PiSeduce resource manager. Refer to this [article](/2020-11-26-create-your-own-cluster-ep2) to learn more about describing the ressources of your cluster.
 
 ## Explanations concerning the additional packages
 A brief description of the additional packages to install on the pimaster:
 * **dnsmasq** is used to create both the DHCP server and the PXE/TFTP server.
 * **git** is used to download/update the PiSeduce resource manager.
-* **libffi-dev** is a library required to install the [ttyd](https://github.com/tsl0922/ttyd){:target="_blank"} web
-  terminal.
 * **mariadb-client** and **mariadb-server** is the database used by the resource manager.
 * **nfs-kernel-server** is the NFS server. To configure the pislaves, we boot them from a NFS file system hosted on the
   pimaster.
 * **python3-mysqldb** and **python3-pip**: the resource manager is written in Python 3.7.
 * **pv** is used to monitor the download of the operating system while deploying environments on the pislaves.
 * **snmp** is used to communicate with the switch.
+* **tshark** is used to add new nodes to the PiSeduce resource manager
 * **vim** is my favourite text editor.

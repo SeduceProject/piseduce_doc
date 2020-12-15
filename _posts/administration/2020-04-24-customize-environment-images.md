@@ -20,13 +20,13 @@ gunzip raspbian-lite.img.gz
 After decompressing the archive, we get the file *raspbian-lite.img*.
 
 ### Increase the size of the Raspbian image
-In this example, we increase the size of the image by 1&nbsp;GB. Take care of increase as little as possible the image
+In this example, we increase the size of the image by 1&nbsp;GB. Take care of increasing as little as possible the image
 size because the deployment time is heavily dependent on this size.
 * Append zeros to the image file
 ```
 dd if=/dev/zero bs=1M count=1024 >> raspbian-lite.img
 ```
-* Expand the partition
+* Expand the partition  
 Delete the second partition, then, create a partition with the whole space. Note the value of the
 fist sector of the second partition before deleting it. Replace the first_sector by the value of the first sector of
 the second partition.
@@ -34,7 +34,7 @@ the second partition.
 fdisk -u raspbian-lite.img
 p; d; 2; n; p; 2; first_sector; ''; w;
 ```
-* Mount the partition
+* Mount the partition  
 Use the loop device given by the first command (`losetup -f`), it is a free loop device.
 ```
 sudo losetup -f
@@ -61,7 +61,11 @@ In our case, we need to install compilation tools and start the ttyd daemon at t
 **WARNING**: For this section, you must mount the disk image on a raspbian operating system.
 * chroot to the Raspbian system
 ```
-chroot mount_dir
+cd mount_dir
+mount --bind /proc proc
+mount --bind /sys sys
+mount --bind /dev dev
+chroot .
 ```
 * Update the system and install additional packages
 ```
