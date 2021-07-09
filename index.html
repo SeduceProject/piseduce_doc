@@ -1,18 +1,20 @@
 ---
 layout: page
-title: PiSeduce cluster
-subtitle: A raspberry cluster to study energy and edge computing
+title: The PiSeduce Project
+subtitle: Raspberry clusters to study energy and edge computing
 use-site-title: true
 ---
 <h2 class="post-title">The PiSeduce Project</h2>
-<p>With the <a href="https://seduce.fr/" target="_blank">Seduce Project</a>, we study both thermal and power management
+<p>
+    With the <a href="https://seduce.fr/" target="_blank">Seduce Project</a>, we study both thermal and power management
     aspects in datacenters. The energy needed to build a whole datacenter room is huge. It requires many people with
-    specific competences, persevering and calm leaders and, of course, lot of time and money. So, we want to build a
-    more
-    flexible infrastructure for our research studies that would be fast to deploy, easy to maintain and cheap enough to
-    enable other motivated people to replicate it.</p>
+    specific competences, persevering and calm leaders and, of course, lot of time and money. So, with the <b>PiSeduce
+    Project</b>, we want to build a more flexible infrastructure for our research studies that would be fast to deploy,
+    easy to maintain and cheap enough to enable other motivated people to replicate it.
+</p>
 <h2 class="post-title">A Raspberry Pi Cluster</h2>
-<p> We were looking for small (in size) computing units at lower price which do not require a cooling system and a
+<p>
+    We were looking for small (in size) computing units at lower price which do not require a cooling system and a
     specific software stack. So we bought Raspberry Pis to set up our first cluster. Thanks to the popularity of these
     computing platforms, a large number of projects already exists, and so, it is easy to find documentation and do not
     waste time to build our cluster. With the Raspbian system, we can install and configure usual softwares running on
@@ -20,13 +22,19 @@ use-site-title: true
     especially, the <a href="https://www.raspberrypi.org/products/poe-hat/" target="_blank">PoE HAT</a>. With this
     device, Raspberry must be capable of being powered from PoE (Power over Ethernet) switches. To conclude, Raspberry
     Pi is the best candidate to compose our easy-to-use cluster that consists of one PoE switch, Raspberry Pis,
-    PoE&nbsp;HATs, Ethernet cables, SD cards. With less than 1000&nbsp;euros, we build and run our cluster.</p>
+    PoE&nbsp;HATs, Ethernet cables, SD cards. With less than 1000&nbsp;euros, we build and run our cluster.
+</p>
 <h2 class="post-title">PiSeduce Resource Manager</h2>
-<p>In order to share our new infrastructure with the team, the next step was to develop a software to configure
+<p>
+    In order to share our new infrastructure with the team, the next step was to develop a software to configure
     Raspberry Pis and provide end-users with ready to use systems. The PiSeduce Resource Manager allows users to reserve
     Raspberry Pis for some time, choose the software stack that they want to use and get login information. The software
-    stack is built in Python and provides a web interface to administrators and users. See nice screenshots in our
-    <a href="/category/user-guide/index.html">user guide</a>.</p>
+    stack is built in Python and provides a web interface to administrators and users. The resource manager is
+    divided into two open source projects hosted on GitHub:
+    <a href="http://github.com/remyimt/piseduce_webui" target="_blank">piseduce_webui</a> and
+    <a href="http://github.com/remyimt/piseduce_agent" target="_blank">piseduce_agent</a>. Learn more about the resource
+    manager on our <a href="/category/user-guide/index.html">user guide</a>.
+</p>
 <center>
     {% for cat in (1..4) %}
     <div class="nav-buttons">

@@ -1,6 +1,6 @@
 ---
 title: User Guide
-subtitle: "How to use the PiSeduce raspberry manager"
+subtitle: "How to use the PiSeduce Raspberry manager"
 category: User Guide
 ---
 
