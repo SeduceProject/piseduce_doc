@@ -1,6 +1,6 @@
 ---
 layout: post
-title: How to Use of the Resource Manager
+title: How to Use the Resource Manager
 subtitle: Deploy environments on Raspberry Pi
 category: User Guide
 index: 0
