@@ -1,9 +1,9 @@
 ---
 layout: post
-title: PiSeduce Resource Manager Installation
-subtitle: PiSeduce Services and configuration files
+title: PiSeduce Installation - Episode 3
+subtitle: Resource Manager Installation & Configuration
 category: Administration
-index: 3
+index: 4
 ---
 
 After configuring the PoE switch and the Raspberrys, the next step is to install the PiSeduce
@@ -26,7 +26,7 @@ SDCARD of the pimaster:
 ```
 wget http://dl.seduce.fr/raspberry/os-images/piseduce-16-Apr-2021.img.tar.gz
 tar xvf piseduce-16-Apr-2021.img.tar.gz
-dd if=piseduce-16-Apr-2021.img of=/dev/sda3 bs=1M conv=fsync
+dd if=piseduce-16-Apr-2021.img of=/dev/sdb bs=4M conv=fsync
 ```
 
 The longest way to install the pimaster is to install the manager from a fresh raspbian operating
@@ -173,17 +173,45 @@ To register switches, the following fields are required:
   provides the power supply to the pimaster, it can not be turned off.
 * the **oid_first_port** is the SNMP OID of the PoE port number one. The OIDs are described in the MiB
   provided by the switch manufacturer. You can find more details about OID in this
-  [article](/2021-07-19-prepare-the-switch/). For our D-Link switch, the OID of the first port is
-  `1.3.6.1.2.1.105.1.1.1.3.1.1`
+  [article](/2021-07-19-prepare-the-switch/).
+
+If you do not know the OID of the first PoE port, you can try the following `snmpwalk` command (with
+192.0.0.3 as the switch IP):
+```
+snmpwalk -v2c -c pi-mgnt 192.0.0.3 1.3.6.1.2.1.105.1.1.1.3
+```
+If the number of OIDs in the answer is equal to the number of ports and the value of every OID is 1
+or 2, the OID of the first PoE port is the first OID of the answer. For example, the answer of the
+previous command with a Linksys LGS308P switch is:
+```
+iso.3.6.1.2.1.105.1.1.1.3.1.49 = INTEGER: 1
+iso.3.6.1.2.1.105.1.1.1.3.1.50 = INTEGER: 2
+iso.3.6.1.2.1.105.1.1.1.3.1.51 = INTEGER: 2
+iso.3.6.1.2.1.105.1.1.1.3.1.52 = INTEGER: 2
+iso.3.6.1.2.1.105.1.1.1.3.1.53 = INTEGER: 2
+iso.3.6.1.2.1.105.1.1.1.3.1.54 = INTEGER: 2
+iso.3.6.1.2.1.105.1.1.1.3.1.55 = INTEGER: 2
+iso.3.6.1.2.1.105.1.1.1.3.1.56 = INTEGER: 1
+```
+So, the **oid_first_port** value is *iso.3.6.1.2.1.105.1.1.1.3.1.49* or *1.3.6.1.2.1.105.1.1.1.3.1.49*.
+
+Here, a list of the OID of the first PoE port that we already know:
+
+| Switch Manufacturer   | OID of the first PoE port       |
+| --------------------- | ------------------------------- |
+| D-Link                | 1.3.6.1.2.1.105.1.1.1.3.1.1     |
+| Linksys               | 1.3.6.1.2.1.105.1.1.1.3.1.49    |
+| --------------------- | ------------------------------- |
 
 After clicking the *Add* button, the switch appears in the *Existing switchs* section. The number of
 ports of the switch should be equal to the value of the *Port_nb* property. If the number of
 detected ports is wrong, the OID of first port is probably wrong too. Delete the switch and try to
 fix the issue by modifying the *oid_first_port* value.
 
-The **first_ip** column defines the last digit of the IP address of the Raspberry in the first port
-of the switch. For example, if the *first_ip* property is equal to 9, the Raspberry on the first
-port of the switch will be 48.48.0.9. The Raspberry on the second port will be 48.48.0.10, etc.
+The **first_ip** column of the *Existing Switch* table defines the last digit of the IP address of
+the Raspberry connected to the first port of the switch. For example, if the *first_ip* property is
+equal to 9, the Raspberry on the first port of the switch will be 48.48.0.9. The Raspberry on the
+second port will be 48.48.0.10, etc.
 
 The *Switch Management* section of the switch page allows administrators to manage the PoE ports of
 the selected switch. The available operations are:
@@ -220,7 +248,8 @@ the required information. This operation should be take 2 minutes per Raspberry.
 
 To start the detection process, tick the squares associated to the ports connected to the
 Raspberrys, select the *Detect Nodes* operation and click on the *Execute* button. A text area will
-open to show the log of the operation. At the end of the operation, the Raspberry names should be
+open to show the log of the operation. **Do not refresh the page or execute another reconfiguration
+during the *Detect Nodes* process**. At the end of the operation, the Raspberry names should be
 shown in the switch table close to the port numbers. The Raspberry names are composed of the name of
 the agent followed by the last digit of the IP address.
 

@@ -1,9 +1,9 @@
 ---
 layout: post
-title: Prepare your PoE Switch
-subtitle: SNMP and PoE configuration
+title: PiSeduce Installation - Episode 2
+subtitle: Prepare your PoE Switch
 category: Administration
-index: 2
+index: 3
 ---
 
 The main hardware requires to set up a PiSeduce cluster is a PoE switch and a few Raspberry Pis. A
@@ -22,7 +22,7 @@ to configure the SNMP access on the D-Link switch *DGS-1210-28P*:
 
 ### SNMP Configuration Test (from Raspbian OS)
 To test the SNMP configuration, we need OIDs. OIDs are pathes to SNMP information. They are
-described in the MiB provided by the switch manufacturer. MiBs can be difficult to find. For the D-Link
+described in the MiB provided by the switch manufacturer. MiBs can be difficult to find. For D-Link
 switches, the OID used to know the state of the PoE ports starts with `1.3.6.1.2.1.105.1.1.1.3`. We
 can get the state of the ports with the following commands (the switch IP is 192.0.0.3):
 ```

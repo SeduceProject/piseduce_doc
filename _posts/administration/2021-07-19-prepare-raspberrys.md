@@ -1,9 +1,9 @@
 ---
 layout: post
-title: Prepare your Raspberrys
-subtitle: Configure the PXE boot
+title: PiSeduce Installation - Episode 1
+subtitle: Prepare your Raspberrys
 category: Administration
-index: 1 
+index: 2
 ---
 
 The main hardware requires to set up a PiSeduce cluster is a PoE switch and at least eight
@@ -58,7 +58,7 @@ HAT and PXE boot.
   `rpi-eeprom-update -d -f netboot-pieeprom.bin`.
 
   On recent systems, the command `rpi-eeprom-config` has the `--edit` option to modify the
-  *BOOT_ORDER* value without extracting the EEPROM file.
+  *BOOT_ORDER* value without extracting the EEPROM file:
   ```
   rpi-eeprom-config --edit
   BOOT_ORDER=0x12
