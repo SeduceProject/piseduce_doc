@@ -159,7 +159,7 @@ After deploying the dual_boot environment, users connect to the node on the Rasp
 customize the environment as you want. Once the customization is completed, users have to modify the boot order to
 reboot on the tiny_core OS.
 * Change the cmdline.txt (see this
-  [article](https://superuser.com/questions/1518984/how-to-boot-from-selected-partition-in-raspberry-pi-3)
+  [article](https://superuser.com/questions/1518984/how-to-boot-from-selected-partition-in-raspberry-pi-3))
 * Upload the new boot files to the TFTP
 * Reboot the operating system
 

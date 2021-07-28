@@ -34,10 +34,18 @@ system by following this [article](/2020-05-29-picluster-setup-from-scratch-ep2/
 
 The default network configuration of the PiSeduce cluster is to use the pimaster as a gateway
 between an existing network with internet access and the private network 48.48.0.0/24 including the
-Raspberrys connected to the switch. So there is two options to connect the pimaster to internet. The
-first option is to add an USB Ethernet adapter and configure it. The second option is to connect the
-pimaster to an existing WIFI providing the internet access. This option is described in the following
-of this article.
+Raspberrys connected to the switch. So there is two options to connect the pimaster to internet.
+
+The first option is to add an USB Ethernet adapter and configure it. We use the *D-Link USB 3.0
+Gigabit Ethernet Adapter (ref: DUB-1312)* which works properly. If we use this option, we have to
+edit the `/etc/rc.local` file to change the network interface used in the NAT command:
+```
+iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
+```
+By default, the wireless network interface `wlan0` is used.
+
+The second option is to connect the pimaster to an existing WIFI providing the internet access. This
+option is described in the following of this article.
 
 By default, the pimaster has the IP *48.48.0.254*. We connect to the pimaster by linking our
 computer to the switch and setting the static IP *48.48.0.2* with a *255.255.255.0* netmask. Once
@@ -45,9 +53,15 @@ our computer is configured, we connect to the pimaster with SSH and the password
 ```
 ssh -l root 48.48.0.254
 ```
-
-If you can not connect your computer to the switch, see this
+If you can not physically connect your computer to the switch, see this
 [article](/2021-07-20-pimaster-wifi-connection).
+
+We recommend to increase the size of the swap by editing the `/etc/dphys-swapfile` file:
+```
+# change the line 'CONF_SWAPSIZE=100' to 'CONF_SWAPSIZE=1024'
+vi /etc/dphys-swapfile
+reboot
+```
 
 ### WIFI connection
 After logging in the pimaster with the root account, we will connect the pimaster to an existing
@@ -238,9 +252,16 @@ To manually registrer Raspberrys as nodes, the following fields are required:
 * the **port_number** is the number of the PoE port connected to the raspberry. This switch port will
   be turned off/on to manage the associated Raspberry.
 * the **serial** is used during the PXE boot process. This identifier is a key property to
-  successfully boot Raspberrys from the NFS server hosted in the pimaster. The serial is obtained by
-  the command `cat /proc/cpuinfo | grep Serial`. The 8 last digits is the serial of the Raspberry,
-  e.g., *6295cdae*.
+  successfully boot Raspberrys from the NFS server hosted in the pimaster.
+
+Both the **model** and the **serial** values used to configure Raspberrys can be obtained from the
+terminal of the Raspbian OS. To get the **model** of the Raspberry, we need the *Revision Code*:
+`cat /proc/cpuinfo | grep Revision`. Then, we refer to the last tables of this
+[page](https://www.raspberrypi.org/documentation/hardware/raspberrypi/revision-codes/README.md){:target="_blank"}
+to know the Raspberry model. The resource manager **model** identifiers are: *RPI3B+1G*, *RPI4B1G*,
+*RPI4B2G*, *RPI4B4G*, *RPI4B8G*. To get the **serial** of the Raspberry, we use the following
+command: `cat /proc/cpuinfo | grep "Serial" | awk '{print substr( $3, length($3) - 7, length($3) )
+}'`. The **serial** is a 8 hexadecimal digit string.
 
 From the switch page, the operation *Detect Nodes* of the *Switch Management* section allows to
 register the Raspberrys. During this process, the Raspberry will reboot many times to retrieve all
