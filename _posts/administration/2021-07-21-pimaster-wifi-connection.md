@@ -8,7 +8,7 @@ index: 7
 
 After copying the piseduce image on the SDCARD and boot the Raspberry, we need to connect to the
 pimaster, i.e., the Raspberry hosting the resource manager, to complete its configuration as
-described in this [article](/2021-07-20-manager-configuration#resource-manager-installation).
+described in this [article](/2021-07-20-manager-installation#resource-manager-installation).
 
 The easy way to connect to the pimaster is to plug a keyboard and a screen into the Raspberry. An
 alternative way is to link a computer to the switch and set a static IP, for example, *48.48.0.2*, to
@@ -20,7 +20,7 @@ This hotspot is configured to have the static IP *48.48.0.253* assigned to its E
 and so, it can be a gateway to connect the *48.48.0.0/24* network.
 
 To install the hotspot, download the [raspAP
-image](http://192.168.122.22/raspberry/os-images/raspAP-10-fev-2021.img.tar.gz) and write it to a
+image](http://dl.seduce.fr/raspberry/piseduce/raspAP-10-fev-2021.img.tar.gz) and write it to a
 SDCARD:
 ```
 tar xvf raspAP-10-fev-2021.img.tar.gz

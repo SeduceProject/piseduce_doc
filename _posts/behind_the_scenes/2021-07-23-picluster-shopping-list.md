@@ -25,7 +25,7 @@ manageable with the SNMP protocol, more specifically, we need to turn off and on
 Nowadays, most of the switchs support this feature.  
 We bought the **8-port switch** *Linksys LGS308MP* - **200 euros**.
 
-Obviously, the other key device of your PiSeduce cluster is the Raspberry Pi. We distinguish two
+Obviously, the other key device of the PiSeduce cluster is the Raspberry Pi. We distinguish two
 types of Raspberry Pi: the pimaster and the pislaves. The pimaster hosts the PiSeduce resource
 manager. It communicates with the switch and manages the other Raspberry Pis by providing them with
 IP addresses, operating system images and NFS file systems.  
@@ -65,10 +65,10 @@ for storing operating system images and one **D-Link USB&nbsp;3.0 Gigabit Ethern
 DUB-1312)** (**35 euros**) to configure the pimaster as a gateway between the cluster and another
 network. Now, we are ready to connect all the devices and configure the software stack.
 
-We hope that we have addressed your concern about the hardware configuration of PiSeduce clusters.
+We hope that we have addressed all the concerns about the hardware configuration of PiSeduce clusters.
 The total cost for our cluster is about **a thousand euros**.
 
-**Pro Tips**: To organize your Raspberrys in a beautiful tower, we buy 40 Male/Female Threaded
+**Pro Tips**: To organize our Raspberrys in a beautiful tower, we buy 40 Male/Female Threaded
 Standoffs (M3 x M3). We choose to use the 16mm long (hexagonal body + threaded head) standoffs. We
 build towers of 8 Raspberrys using 4 standoffs per Raspberry (2 for the board and 2 for the PoE HAT)
 and four more standoffs to build the small legs of the tower.

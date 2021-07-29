@@ -1,25 +1,25 @@
 ---
 layout: post
-title: Create your Own Environments
+title: Create New Environments
 subtitle: Customize Operating System Images
 category: User Guide
 index: 3
 ---
 
-For users with specifc needs, the available environments could not be appropriate. The deployment of customized
-environments could also save time to you and other users. In this article, we describe two ways to create customized
-environment images.
-The [first way](https://doc.seduce.fr/2021-07-01-create-your-own-environments/#fast-environment-customization) is the
-easiest and fastest one but all customizations are not possible.
-The [second way](https://doc.seduce.fr/2021-07-01-create-your-own-environments/#full-environment-customization) allows
-user to fully customize their environment. 
+For users with specifc needs, the available environments could not be appropriate. So, the
+deployment of customized environments could save time and help users to run their experiments. In
+this article, we describe two ways to create customized environment images. The [first
+way](/2021-07-10-create-new-environments/#fast-environment-customization) is the easiest and fastest
+one but all customizations are not possible. The [second
+way](/2021-07-10-create-new-environments/#full-environment-customization-future-work) allows user to
+fully customize their environment.
 
 ## Fast Environment Customization
 
-The fastest way to create customized environments is to download the image of the operating system to modify on a
-Raspberry and alter this image by adding packages. In this example, we will modify the Raspbian&nbsp;Lite operating
-system to install a web terminal [ttyd](https://github.com/tsl0922/ttyd){:target="_blank"} available on the port 8080 of
-the node.
+The fastest way to create customized environments is to download the image of the operating system
+to modify on a Raspberry and alter this image by adding packages. In this example, we will modify
+the Raspbian&nbsp;Lite operating system to install a web terminal
+[ttyd](https://github.com/tsl0922/ttyd){:target="_blank"} available on the port 8080 of the node.
 
 ### Download the Raspbian image
 ```
@@ -29,8 +29,8 @@ gunzip raspbian-lite.img.gz
 After decompressing the archive, we get the file *raspbian-lite.img*.
 
 ### Increase the size of the Raspbian image
-In this example, we increase the size of the image by 1&nbsp;GB. Take care of increasing as little as possible the image
-size because the deployment time is heavily dependent on this size.
+In this example, we increase the size of the image by 1&nbsp;GB. Take care of increasing as little
+as possible the image size because the deployment time is heavily dependent on this size.
 ```
 dd if=/dev/zero bs=1M count=1024 >> raspbian-lite.img
 ```
@@ -96,17 +96,18 @@ umount boot_dir
 ```
 
 ### Copy files to the Raspbian image
-The image file system is available in the `mount_dir` directory. We clone the git repository of the ttyd project in the
-root account.
+The image file system is available in the `mount_dir` directory. We clone the git repository of the
+ttyd project into the root account.
 ```
 cd mount_dir/root
 git clone https://github.com/tsl0922/ttyd
 ```
-After copying files to the disk image, you will need to mount the Raspbian image from a Raspberry Pi device.
+After copying files to the disk image, we will need to mount the Raspbian image from a Raspberry Pi
+device.
 
 ### Make changes on the Raspbian operating system
 In our case, we need to install compilation tools and start the ttyd daemon at the startup.  
-**WARNING**: For this section, you must mount the disk image on a raspbian operating system.
+**WARNING**: For this section, we must mount the disk image on a raspbian operating system.
 ```
 # chroot to the Raspbian system
 cd mount_dir
@@ -123,6 +124,7 @@ cmake ..
 make
 cp ttyd /usr/bin/
 ```
+
 ### Start ttyd at the start up
 To run the ttyd daemon at the startup, edit the `/etc/rc.local` file and append the following line:
 ```
@@ -140,12 +142,12 @@ losetup -d /dev/loop1
 ```
 ### Compress the environment image
 Do not forget to compress the new system image with the `tar` utility and the gzip compression option `-z` before
-sending it to the resource manager. 
+uploading it to the resource manager:
 ```
 tar -czf raspbian_ttyd_2021_07_09.tar.gz raspbian-lite.img
 ```
-Now, you can contact the administrator of your PiSeduce infrastrucuture in order to add your image to the resource
-manager.
+Now, we need the administrator rights to configure the PiSeduce resource manager in order to make our
+new image available to all users.
 
 ## Full Environment Customization (Future Work)
 This second approach is more difficult and needs more time. We start by deploying the dual_boot environment on a
@@ -156,10 +158,10 @@ customized raspbian OS to the third partition.
 
 ### Customizing the Raspbian OS
 After deploying the dual_boot environment, users connect to the node on the Raspbian operating system. Now, users can
-customize the environment as you want. Once the customization is completed, users have to modify the boot order to
+customize the environment as they want. Once the customization is completed, users have to modify the boot order to
 reboot on the tiny_core OS.
 * Change the cmdline.txt (see this
-  [article](https://superuser.com/questions/1518984/how-to-boot-from-selected-partition-in-raspberry-pi-3))
+  [article](https://superuser.com/questions/1518984/how-to-boot-from-selected-partition-in-raspberry-pi-3){:target="_blank"})
 * Upload the new boot files to the TFTP
 * Reboot the operating system
 
@@ -184,12 +186,12 @@ Device                                    Boot  Start     End Sectors  Size Id T
 /dev/mmcblk0p2        532480 11018240 10485761    5G 83 Linux
 /dev/mmcblk0p3      11018251 12042249  1023999  500M 83 Linux
 ```
-The last sector of the second partition is 11018240. Before creating an image of the customized operating system, we
-edit the cmdline.txt to boot on the first partition.
+The last sector of the second partition is 11018240. Before creating an image of the customized
+operating system, we edit the cmdline.txt to boot on the first partition.
 ```
 vim /boot/cmdline.txt
 dd if=/dev/mmcblk0 of=user_env_2021_07_09.img bs=512 count=$((11018240 + 5))
 tar -czf user_env_2021_07_09.img.tar.gz user_env_2021_07_09.img
 ```
-Now, you can contact the administrator of your PiSeduce infrastrucuture in order to add your image to the resource
-manager.
+Now, we need the administrator rights to configure the PiSeduce resource manager in order to make our
+new image available to all users.

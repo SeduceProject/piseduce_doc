@@ -179,5 +179,5 @@ date +%s
 ```
 If the local time of the pimaster is less the first timestamp of the deployment in the database (in
 the example, *1627484160*) then the local time of the pimaster is wrong. The time of the pimaster
-should be updated when the pimaster is connected to the Internet. So, check your network
-connectivity or update the pimaster time manually or by using ntp servers.
+should be updated when the pimaster is connected to the Internet. So, we check our network
+connectivity or we update the pimaster time manually.

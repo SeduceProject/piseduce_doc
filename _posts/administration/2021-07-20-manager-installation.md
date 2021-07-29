@@ -33,7 +33,7 @@ dd if=piseduce-armhf-28-juil-2021.img of=/dev/sdb bs=4M conv=fsync
 ```
 
 The longest way to install the pimaster is to install the manager from a fresh raspbian operating
-system by following this [article](/2020-05-29-picluster-setup-from-scratch-ep2/){:target="_blank"}.
+system by following this [article](/2021-07-26-manager-install-from-scratch).
 
 The default network configuration of the PiSeduce cluster is to use the pimaster as a gateway
 between an existing network with internet access and the private network 48.48.0.0/24 including the
@@ -56,8 +56,8 @@ our computer is configured, we connect to the pimaster with SSH and the password
 ```
 ssh -l root 48.48.0.254
 ```
-If you can not physically connect your computer to the switch, see this
-[article](/2021-07-20-pimaster-wifi-connection).
+If we can not physically connect our computer to the switch, try this [alternative
+method](/2021-07-21-pimaster-wifi-connection).
 
 We recommend to increase the size of the swap by editing the `/etc/dphys-swapfile` file:
 ```
@@ -198,11 +198,11 @@ To register switches, the following fields are required:
 * the SNMP **community** to query the switch (e.g., *pi-mgnt*)
 * the **master_port** is the port of the switch that is connected to the pimaster. As this port
   provides the power supply to the pimaster, it can not be turned off.
-* the **oid_first_port** is the SNMP OID of the PoE port number one. The OIDs are described in the MiB
-  provided by the switch manufacturer. You can find more details about OID in this
+* the **oid_first_port** is the SNMP OID of the PoE port number one. The OIDs are described in the
+  MiB provided by the switch manufacturer. More details about OID can be found in this
   [article](/2021-07-19-prepare-the-switch/).
 
-If you do not know the OID of the first PoE port, you can try the following `snmpwalk` command (with
+If we do not know the OID of the first PoE port, we can try the following `snmpwalk` command (with
 192.0.0.3 as the switch IP):
 ```
 snmpwalk -v2c -c pi-mgnt 192.0.0.3 1.3.6.1.2.1.105.1.1.1.3
@@ -268,13 +268,17 @@ To manually registrer Raspberrys as nodes, the following fields are required:
   successfully boot Raspberrys from the NFS server hosted in the pimaster.
 
 Both the **model** and the **serial** values used to configure Raspberrys can be obtained from the
-terminal of the Raspbian OS. To get the **model** of the Raspberry, we need the *Revision Code*:
-`cat /proc/cpuinfo | grep Revision`. Then, we refer to the last tables of this
+terminal of the Raspbian OS.
+
+To get the **model** of the Raspberry, we need the *Revision Code*: `cat /proc/cpuinfo | grep
+Revision`. Then, we refer to the last table of this
 [page](https://www.raspberrypi.org/documentation/hardware/raspberrypi/revision-codes/README.md){:target="_blank"}
 to know the Raspberry model. The resource manager **model** identifiers are: *RPI3B+1G*, *RPI4B1G*,
-*RPI4B2G*, *RPI4B4G*, *RPI4B8G*. To get the **serial** of the Raspberry, we use the following
-command: `cat /proc/cpuinfo | grep "Serial" | awk '{print substr( $3, length($3) - 7, length($3) )
-}'`. The **serial** is a 8 hexadecimal digit string.
+*RPI4B2G*, *RPI4B4G*, *RPI4B8G*.
+
+To get the **serial** of the Raspberry, we use the following command: `cat /proc/cpuinfo | grep
+"Serial" | awk '{print substr( $3, length($3) - 7, length($3))}'`. The **serial** is a 8 hexadecimal
+digit string.
 
 From the switch page, the operation *Detect Nodes* of the *Switch Management* section allows to
 register the Raspberrys. During this process, the Raspberry will reboot many times to retrieve all

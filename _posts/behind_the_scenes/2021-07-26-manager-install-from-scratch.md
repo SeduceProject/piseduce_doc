@@ -353,8 +353,8 @@ Configuration](/2021-07-20-manager-installation/#switch-ip-configuration) sectio
 To log into the pimaster by using the *root* user with a password, the first step is to set a
 complex password to the *root* user ([online password
 generators](https://passwordsgenerator.net/){:target="_blank"} can help to generate good passwords).
-After loging in with the *root* user, enter the `passwd` command and type your password twice. The
-password of the *root* user is set. Then, we enable the root login with SSH by modifying the
+After loging in with the *root* user, we enter the `passwd` command and type our password twice. The
+password of the *root* user is set. Then, we enable the root login with SSH by editing the
 `/etc/ssh/sshd_config` file. We uncomment the line `PermitRootLogin prohibit-password` and change
 the value to `PermitRootLogin yes`. We complete the SSH configuration by restarting the SSH server
 `service ssh restart`.
@@ -373,7 +373,7 @@ done in a small partition (on the SDCARD). To reduce the system partition size, 
 the auto-resize operation of the Raspbian system by removing the `init=` option of the `cmdline.txt`
 file (located in the boot partition). Then, we expand the system partition in order to have a
 partition size equal to the installation size. The expanding of the partition is described in this
-[article](http://localhost:4000/2021-07-10-create-your-own-environments/#information-about-the-second-partition).
+[article](http://localhost:4000/2021-07-10-create-new-environments/#information-about-the-second-partition).
 
 To deploy the resource manager in other Raspberrys without doing again this installation, we create
 a system image of the SDCARD. Before making this image, we clean the system by:
@@ -383,8 +383,8 @@ a system image of the SDCARD. Before making this image, we clean the system by:
   system!**
 
 Then, follow this
-[article](/2021-07-10-create-your-own-environments/#create-an-archive-of-the-raspbian-os) to create
-the compressed image of the file system.
+[article](/2021-07-10-create-new-environments/#create-an-archive-of-the-raspbian-os) to create the
+compressed image of the file system.
 
 ### Explanations concerning the additional packages
 A brief description of the additional packages to install on the pimaster:

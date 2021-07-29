@@ -13,7 +13,7 @@ only one environment: the
 [Raspbian&nbsp;lite](https://www.raspberrypi.org/downloads/raspbian/){:target="_blank"} operating
 system without additional package. For the most efficient use of the Raspberry cluster,
 administrators can register other environments with different operating systems or additional
-installed packages. See this [article](/2021-07-10-create-your-own-environments/) to customize an
+installed packages. See this [article](/2021-07-10-create-new-environments/) to customize an
 existing operating system image. The system images are located in the environment directory defined
 in the `/root/piseduce_agent/config_agent.json` file by the value of the `env_path` key.
 
@@ -26,7 +26,7 @@ piCore-10.0beta12b.img`. The result will be a file with the `.tar.gz` extension.
 
 **IMPORTANT**: If the resource manager manages Raspberry Pi 3, do not forget to delete the
 `bootcode.bin` file of the sytem image as described in this
-[article](/2021-07-10-create-your-own-environments#delete-the-bootcodebin-file).
+[article](/2021-07-10-create-new-environments#delete-the-bootcodebin-file).
 
 The environment page allows administrators to register new images as environments. This page is
 available by clicking on the *(admin) Environment* item of the menu.

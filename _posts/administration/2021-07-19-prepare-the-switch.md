@@ -1,15 +1,15 @@
 ---
 layout: post
 title: PiSeduce Installation - Episode 2
-subtitle: Prepare your PoE Switch
+subtitle: Prepare the PoE Switch
 category: Administration
 index: 3
 ---
 
 The main hardware requires to set up a PiSeduce cluster is a PoE switch and a few Raspberry Pis. A
 more precise list of the hardware can be found in this
-[article](/2020-05-28-picluster-setup-from-scratch-ep1). The PoE switch is an important component of
-PiSeduce clusters because it supplies the electrical energy of the Raspberrys and allows one of the
+[article](/2021-07-23-picluster-shopping-list). The PoE switch is an important component of PiSeduce
+clusters because it supplies the electrical energy of the Raspberrys and allows one of the
 Raspberrys, called the pimaster, to turn off and on the other Raspberrys called the pislaves. To
 control the PoE ports, the pimaster needs to have SNMP read/write access to the switch.
 
@@ -38,7 +38,7 @@ snmpget -v2c -c private 192.168.1.23 1.3.6.1.2.1.105.1.1.1.3.1.16
 ```
 
 ### PoE configuration
-From the switch interface, you can turn on and off the PoE. On our D-Link switch, the PoE port
+From the switch interface, we can turn on and off the PoE. On our D-Link switch, the PoE port
 settings are available from the menu *PoE > PoE Port Settings*. The state of every port can be set
 to *enabled* or *disabled*. As only the pimaster has to be on, we disable all ports except the port
 number 8. Consequently, by default or after a reboot, only the Raspberry on the port 8 will be

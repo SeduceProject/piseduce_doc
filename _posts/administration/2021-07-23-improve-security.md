@@ -6,17 +6,20 @@ category: Administration
 index: 8
 ---
 
-The PiSeduce resource manager is hosted on a machine, probably a Raspberry, that we call the
-pimaster. To limit the risk of hacker intrusion into the resource manager, precautions must be taken
-even more if the resource manager has been installed from the downloaded [PiSeduce
-image](http://dl.seduce.fr/raspberry/os-images/piseduce-latest.img.tar.gz). Indeed, the PiSeduce
-image contains SSH keys, agent authentication token, passwords that everybody knows.
+The PiSeduce resource manager is hosted on a Raspberry that we call the pimaster. To limit the risk
+of hacker intrusion into the resource manager, precautions must be taken even more if the resource
+manager has been installed from the downloaded PiSeduce image ([ARMHF
+32bit](http://dl.seduce.fr/raspberry/piseduce/piseduce-armhf-28-juil-2021.img.tar.gz) or [ARM64
+64bit](http://dl.seduce.fr/raspberry/piseduce/piseduce-arm64-29-juil-2021.img.tar.gz)). Indeed, the
+PiSeduce image contains SSH keys, agent authentication token, passwords that everybody knows.
 
 **IMPORTANT**: All commands are executed on the pimaster with the **root** user.
 
 ### Secure the SSH access
-To log into the pimaster, the default SSH login is with the `root` user and the password `piseduceadmin`.
-* Change the root password by setting a more complex one. You can generate good passwords from
+To log into the pimaster, the default SSH login is with the `root` user and the password
+`piseduceadmin`. It is important to change the `root` password and secure the SSH connection to the
+pimaster:
+* Change the root password by setting a more complex one. We can generate good passwords from
   [online password generator](https://passwordsgenerator.net/){:target="_blank"}:
   ```
   # Execute this command as root
@@ -45,7 +48,7 @@ deluser --remove-all-files pi
   cat /root/.ssh/id_rsa.pub > /nfs/raspi/root/.ssh/authorized_keys
   cat /nfs/raspi/root/.ssh/id_rsa.pub > /root/.ssh/authorized_keys
   ```
-* Add your SSH keys on the pimaster authorized keys by executing the following commands **on your
+* Add our SSH keys on the pimaster authorized keys by executing the following commands **from our
   local machine**:
   ```
   ssh-keygen

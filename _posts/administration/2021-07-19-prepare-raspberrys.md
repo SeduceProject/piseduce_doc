@@ -1,16 +1,16 @@
 ---
 layout: post
 title: PiSeduce Installation - Episode 1
-subtitle: Prepare your Raspberrys
+subtitle: Prepare the Raspberrys
 category: Administration
 index: 2
 ---
 
 The main hardware requires to set up a PiSeduce cluster is a PoE switch and at least eight
 Raspberrys. A more precise list of the hardware can be found in this
-[article](/2020-05-28-picluster-setup-from-scratch-ep1). In PiSeduce clusters, the PiSeduce Resource
-Manager is able to install operating systems on the Raspberrys by using the network PXE boot, also
-called, Ethernet boot. This boot option is not enabled by default so we have to activate it. As this
+[article](/2021-07-23-picluster-shopping-list). In PiSeduce clusters, the PiSeduce Resource Manager
+is able to install operating systems on the Raspberrys by using the network PXE boot, also called,
+Ethernet boot. This boot option is not enabled by default so we have to activate it. As this
 specific boot configuration is heavily dependent of the Raspberry Pi model, we explain how to set up
 the PXE boot of two models: the Raspberry Pi 3B+ and the Raspberry Pi 4B. Older Raspberrys as
 Raspberry Pi 2 are probably not compatible with our PiSeduce cluster because they do not accept PoE
@@ -22,7 +22,7 @@ HAT and PXE boot.
   done by deleting the `bootcode.bin` file of the boot partition (the first partition of the SDCARD)
   or by inserting an empty SDCARD in the Raspberry.
   
-  To delete the `bootcode.bin` file from Raspberry distribution images, you can mount the first
+  To delete the `bootcode.bin` file from Raspberry distribution images, we can mount the first
   partition of the image and delete the file. In the following example, we delete the `bootcode.bin`
   file of the *2019-09-26-raspbian-buster-lite.img* image (commands are executed from the root
   account):
@@ -66,9 +66,9 @@ HAT and PXE boot.
   Y
   reboot
   ```
-  To save time, you can install the raspbian OS in one SDCARD and move the SDCARD from one
-  Raspberry Pi 4 to another one. You only have to execute the commands without to install and
-  update the raspbian OS.
+  To save time, we can install the raspbian OS in one SDCARD and move the SDCARD from one
+  Raspberry Pi 4 to another one. We only have to execute the commands without installing and
+  updating the raspbian OS.
 
 ### Connect the PoE HAT
 In order to power on the Raspberrys from the PoE support of the switch, we connect PoE HAT to every

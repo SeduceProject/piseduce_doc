@@ -33,13 +33,13 @@ eight tables:
   Raspberry.
 * the *rasp_switch* table that stores the switches used to manage the Raspberry power supply.
 
-For more details about the database tables, you can download the following
-[pdf](/img/02_DB_tables.pdf).
+More details about the database tables are available from the following
+[pdf](/img/DB_tables.pdf).
 
 The description of the tables is available by reading the database with the `sqlite3` tool and by
 reading the Python code.
 
-To read the schema of tables from the `sqlite3` tool, you need to log in to the pimaster:
+To read the schema of tables from the `sqlite3` tool, we need to log in to the pimaster:
 ```
 cd piseduce_webui
 sqlite3 test-ui.db
