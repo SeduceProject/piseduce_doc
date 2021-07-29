@@ -20,13 +20,16 @@ web interface could be slowed. So, we prefer install the two projects on a Raspb
 of memory. This Raspberry is called the pimaster.
 
 ### Resource Manager Installation
-To install the pimaster, the easy way is to download the [PiSeduce
-image](http://dl.seduce.fr/raspberry/os-images/piseduce-16-Apr-2021.img.tar.gz) and write it to the
-SDCARD of the pimaster:
+To install the pimaster, the easy way is to download the PiSeduce image ([ARMHF
+32bit](http://dl.seduce.fr/raspberry/piseduce/piseduce-armhf-28-juil-2021.img.tar.gz) or [ARM64
+64bit](http://dl.seduce.fr/raspberry/piseduce/piseduce-arm64-29-juil-2021.img.tar.gz)) and write it
+to the SDCARD of the pimaster:
 ```
-wget http://dl.seduce.fr/raspberry/os-images/piseduce-16-Apr-2021.img.tar.gz
-tar xvf piseduce-16-Apr-2021.img.tar.gz
-dd if=piseduce-16-Apr-2021.img of=/dev/sdb bs=4M conv=fsync
+wget http://dl.seduce.fr/raspberry/piseduce/piseduce-armhf-28-juil-2021.img.tar.gz
+# Check the md5sum: 4754e8637d31c892c46cebf5a20c333c
+md5sum piseduce-armhf-28-juil-2021.img.tar.gz
+tar xvf piseduce-armhf-28-juil-2021.img.tar.gz
+dd if=piseduce-armhf-28-juil-2021.img of=/dev/sdb bs=4M conv=fsync
 ```
 
 The longest way to install the pimaster is to install the manager from a fresh raspbian operating
@@ -60,6 +63,16 @@ We recommend to increase the size of the swap by editing the `/etc/dphys-swapfil
 ```
 # change the line 'CONF_SWAPSIZE=100' to 'CONF_SWAPSIZE=1024'
 vi /etc/dphys-swapfile
+```
+
+### Resize the system partition
+By default, the system partition is small in order to reduce the piseduce image size. Consequently,
+we have to resize this partition. The `raspi-config` tool helps to use the whole SDCARD as the
+system partition:
+```
+raspi-config
+Advanced Options > Expand Filesytem > Ok
+Finish > Yes
 reboot
 ```
 

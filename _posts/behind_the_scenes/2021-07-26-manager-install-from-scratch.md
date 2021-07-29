@@ -99,7 +99,6 @@ sudo su
 apt update
 apt -y dist-upgrade
 apt -y autoremove
-reboot
 ```
 We configure the SSH access from key authentication by copying our SSH key in the
 `/root/.ssh/authorized_keys` file of the *pi* user by using the `ssh-copy-id` command from our computer:
