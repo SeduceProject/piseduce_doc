@@ -12,8 +12,8 @@ help users to run their experiments. In this article, we describe two ways to
 create customized environment images. The [first
 way](/2021-07-10-create-new-environments/#fast-environment-customization) is the
 easiest and fastest one but all customizations are not possible. The [second
-way](/2021-07-10-create-new-environments/#full-environment-customization-future-work)
-allows user to fully customize their environment.
+way](/2021-07-10-create-new-environments/#full-environment-customization) allows
+user to fully customize their environment.
 
 ## Fast Environment Customization
 
