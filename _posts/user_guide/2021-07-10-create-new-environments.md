@@ -157,8 +157,8 @@ gzip compression option `-z` before uploading it to the resource manager:
 ```
 tar -czf raspbian_ttyd_2021_07_09.tar.gz raspbian-lite.img
 ```
-Now, we need the administrator rights to configure the PiSeduce resource manager
-in order to make our new image available to all users.
+Now, we can follow this [article](/2021-09-01-register-environments/) to
+register our customized environment image to the PiSeduce resource manager.
 
 ## Full Environment Customization
 This second approach is more difficult and needs more time. We start by
@@ -189,7 +189,7 @@ apt install vim sqlite3
 ```
 
 ### TinyCore OS installation
-To install the tinyCore OS, we create a new partition from the free space of the
+To install the piCore OS, we create a new partition from the free space of the
 partition. To find the first sector of this partition, we display the existing
 partition with the `fdisk` command and we add 10 sectors to the last sector of
 the second partition (the last partition):
@@ -219,13 +219,13 @@ p
 [enter] (use the default value)
 w
 ```
-We download the [tinyCore
+We download the [piCore
 OS](http://dl.seduce.fr/raspberry/piseduce/piCore-11.0.img.tar.gz) and we copy
 it to the new partition with the `rsync` tool:
 ```
 # Format the new partition
 mkfs.ext4 /dev/mmcblk0p3
-# Download tinyCore OS
+# Download piCore OS
 wget http://dl.seduce.fr/raspberry/piseduce/piCore-11.0.img.tar.gz
 tar xf piCore-11.0.img.tar.gz
 # Mount the new partition
@@ -236,9 +236,9 @@ mount /dev/mmcblk0p3 new_part
 rsync -a picore_fs/ new_part/
 ```
 
-### Boot on the tinyCore OS
-To boot the tinyCore OS, we have to modify the boot files of the TFTP server of
-the PiSeduce resource manager. So, we install the tinyCore boot files to the
+### Boot on the piCore OS
+To boot the piCore OS, we have to modify the boot files of the TFTP server of
+the PiSeduce resource manager. So, we install the piCore boot files to the
 `/boot` directory before using the `Upload boot files` reconfiguration of the
 *manage* panel to configure the TFTP server. In order to boot from the third
 partition, we have to add the boot option `tce=mmcblk0p3/tce/` to the
@@ -253,7 +253,7 @@ the *Node Reconfiguration* section. We are ready to reboot our Raspberry:
 ```
 reboot
 ```
-The first start of the tinyCore OS is long (about 5 minutes on a Raspberry Pi
+The first start of the piCore OS is long (about 5 minutes on a Raspberry Pi
 4). We usually can ping the Raspberry after 40 seconds. After the boot, we
 connect with SSH to the Raspberry by using the user **tc** and the password
 **piCore**.
@@ -284,5 +284,5 @@ cd /mnt/mmcblk0p3
 sudo dd if=/dev/mmcblk0 of=user_env_2021_08_23.img bs=512 count=$((11018240 + 5))
 sudo tar -czf user_env_2021_08_23.img.tar.gz user_env_2021_08_23.img
 ```
-Now, we need the administrator rights to configure the PiSeduce resource manager in order to make our
-new image available to all users.
+Now, we can follow this [article](/2021-09-01-register-environments/) to
+register our customized environment image to the PiSeduce resource manager.
