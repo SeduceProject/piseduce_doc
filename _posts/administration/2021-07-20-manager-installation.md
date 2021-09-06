@@ -224,11 +224,11 @@ So, the **oid_first_port** value is *iso.3.6.1.2.1.105.1.1.1.3.1.49* or *1.3.6.1
 
 Here, a list of the OID of the first PoE port that we already know:
 
-| Switch Manufacturer   | OID of the first PoE port       |
-| --------------------- | ------------------------------- |
-| D-Link                | 1.3.6.1.2.1.105.1.1.1.3.1.1     |
-| Linksys               | 1.3.6.1.2.1.105.1.1.1.3.1.49    |
-| --------------------- | ------------------------------- |
+| Switch Manufacturer   | OID of the first PoE port       |    OID of the power of the first  port     |
+| --------------------- | ------------------------------- | -------------------------------------------| 
+| D-Link                | 1.3.6.1.2.1.105.1.1.1.3.1.1     | iso.3.6.1.4.1.171.11.153.1000.22.1.1.9.1.1 |
+| Linksys               | 1.3.6.1.2.1.105.1.1.1.3.1.49    |                                            |
+| --------------------- | ------------------------------- | -------------------------------------------| 
 
 After clicking the *Add* button, the switch appears in the *Existing switchs* section. The number of
 ports of the switch should be equal to the value of the *Port_nb* property. If the number of
