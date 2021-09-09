@@ -3,7 +3,7 @@ layout: post
 title: Using Grid5000 with the PiSeduce Resource Manager
 subtitle: Servers Reservation and Management
 category: Administration
-index: 13
+index: 14
 ---
 The PiSeduce Resource Manager is a reservation tool designed for Raspberry Pis.
 It manages the user reservations and deploys the environments on the Raspberrys.

@@ -3,7 +3,7 @@ layout: post
 title: Monitoring Raspberry Power Consumption
 subtitle: Switch Monitoring with SNMP
 category: Administration
-index: 14
+index: 12
 ---
 
 To provide power for the Raspberrys, we use the PoE technology of the switches.

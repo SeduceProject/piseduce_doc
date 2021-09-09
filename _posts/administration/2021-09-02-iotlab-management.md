@@ -3,7 +3,7 @@ layout: post
 title: Using IoT-Lab with the PiSeduce Resource Manager
 subtitle: Sensor Reservation and Management
 category: Administration
-index: 12
+index: 13
 ---
 The PiSeduce Resource Manager is a reservation tool designed for Raspberry Pis.
 It manages the user reservations and deploys the environments on the Raspberrys.
