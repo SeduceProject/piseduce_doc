@@ -159,6 +159,12 @@ service agent_api restart
 ```
 The log file of the *agent_api* service is located to */root/piseduce_agent/info_api.log*.
 
+**NOTE**: If the agent fails with the error *ValueError: bad marshal data*, the
+following command should be fixed the issue:
+```
+find /usr -name '*.pyc' -delete
+```
+
 Now, we are ready to configure our infrastructure from the web interface of the resource manager by
 connecting to the URL [http://192.168.77.68:9000](http://192.168.77.68:9000). From the login page,
 we log in with the admin account (login: *admin@piseduce.fr*, password: *piseduceadmin*).
@@ -198,8 +204,12 @@ To register switches, the following fields are required:
 * the SNMP **community** to query the switch (e.g., *pi-mgnt*)
 * the **master_port** is the port of the switch that is connected to the pimaster. As this port
   provides the power supply to the pimaster, it can not be turned off.
-* the **oid_first_port** is the SNMP OID of the PoE port number one. The OIDs are described in the
+* the **poe_oid** is the SNMP OID of the PoE port number one. The OIDs are described in the
   MiB provided by the switch manufacturer. More details about OID can be found in this
+  [article](/2021-07-19-prepare-the-switch/).
+* the **power_oid** is the SNMP OID to retrieve the power consumption of the PoE
+  port number one. The OIDs are described in the MiB provided by the switch
+  manufacturer. More details about OID can be found in this
   [article](/2021-07-19-prepare-the-switch/).
 
 If we do not know the OID of the first PoE port, we can try the following `snmpwalk` command (with
@@ -220,22 +230,55 @@ iso.3.6.1.2.1.105.1.1.1.3.1.54 = INTEGER: 2
 iso.3.6.1.2.1.105.1.1.1.3.1.55 = INTEGER: 2
 iso.3.6.1.2.1.105.1.1.1.3.1.56 = INTEGER: 1
 ```
-So, the **oid_first_port** value is *iso.3.6.1.2.1.105.1.1.1.3.1.49* or *1.3.6.1.2.1.105.1.1.1.3.1.49*.
+So, the **poe_port** value is *iso.3.6.1.2.1.105.1.1.1.3.1.49*.
 
 Here, a list of the OID of the first PoE port that we already know:
 
-| Switch Manufacturer   | OID of the first PoE port       |    OID of the power of the first  port     |
-| --------------------- | ------------------------------- | -------------------------------------------| 
-| D-Link                | 1.3.6.1.2.1.105.1.1.1.3.1.1     | iso.3.6.1.4.1.171.11.153.1000.22.1.1.9.1.1 |
-| Linksys               | 1.3.6.1.2.1.105.1.1.1.3.1.49    |                                            |
-| --------------------- | ------------------------------- | -------------------------------------------| 
+| Switch Manufacturer   | OID of the first PoE port       |    OID of the power of the first port    |
+| --------------------- | ------------------------------- | -----------------------------------------|
+| D-Link                | 1.3.6.1.2.1.105.1.1.1.3.1.1     | 1.3.6.1.4.1.171.11.153.1000.22.1.1.9.1.1 |
+| Linksys               | 1.3.6.1.2.1.105.1.1.1.3.1.49    | 1.3.6.1.4.1.3955.1000.201.108.1.1.5.1.49 |
+| --------------------- | ------------------------------- | -----------------------------------------|
+
+The **power_oid** property is used to retrieve the monitoring of the electrical
+consumption of the Raspberrys. This property is only required by the monitoring
+module described [here](). If we do not activate this module, we can set this
+property to *none*.
+
+If we do not know the OID to retrieve the power consumption of the first PoE
+port, we can try the following `snmpwalk` command (with 192.0.0.3 as the switch
+IP):
+```
+snmpwalk -v2c -c pi-mgnt 192.0.0.3 1.3.6.1.4.1.171.11.153.1000.22.1.1.9
+```
+If the number of OIDs in the answer is equal to the number of ports and the
+value of every OID is a STRING, then the value of the **power_oid** property is
+the OID of the first line. For example, the result of the previous command with
+a Linksys LGS308P switch is :
+```
+iso.3.6.1.2.1.105.1.1.1.3.1.49 = STRING: "0.0"
+iso.3.6.1.2.1.105.1.1.1.3.1.50 = STRING: "0.0"
+iso.3.6.1.2.1.105.1.1.1.3.1.51 = STRING: "0.0"
+iso.3.6.1.2.1.105.1.1.1.3.1.52 = STRING: "0.0"
+iso.3.6.1.2.1.105.1.1.1.3.1.53 = STRING: "4.3"
+iso.3.6.1.2.1.105.1.1.1.3.1.54 = STRING: "0.0"
+iso.3.6.1.2.1.105.1.1.1.3.1.55 = STRING: "0.0"
+iso.3.6.1.2.1.105.1.1.1.3.1.56 = STRING: "0.0"
+```
+
+The power consumption is expressed in Watt. In our example, only fifth port is
+turned on. The other PoE ports are turned off or no Raspberrys are plugged on
+them because their consumption is 0 W. To test this command, we can connect a
+Raspberry to a PoE port and enable the PoE of this port from the switch web
+interface. The value of the SNMP command should be shown non-zero consumption of
+the used port.
 
 After clicking the *Add* button, the switch appears in the *Existing switchs* section. The number of
 ports of the switch should be equal to the value of the *Port_nb* property. If the number of
 detected ports is wrong, the OID of first port is probably wrong too. Delete the switch and try to
-fix the issue by modifying the *oid_first_port* value.
+fix the issue by modifying the **poe_oid** value.
 
-The **first_ip** column of the *Existing Switch* table defines the last digit of the IP address of
+The *first_ip* column of the *Existing Switch* table defines the last digit of the IP address of
 the Raspberry connected to the first port of the switch. For example, if the *first_ip* property is
 equal to 9, the Raspberry on the first port of the switch will be 48.48.0.9. The Raspberry on the
 second port will be 48.48.0.10, etc.
