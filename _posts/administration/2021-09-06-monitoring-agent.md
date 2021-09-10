@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Monitoring Raspberry Power Consumption
-subtitle: Switch Monitoring with SNMP
+subtitle: Switch Monitoring Agent Installation
 category: Administration
 index: 12
 ---
@@ -60,27 +60,28 @@ snmpwalk -v2c -c private 192.0.0.4 1.3.6.1.4.1.171.11.153.1000.22.1.1.9
 >> iso.3.6.1.4.1.171.11.153.1000.22.1.1.9.1.10 = STRING: "0.0"
 >> iso.3.6.1.4.1.171.11.153.1000.22.1.1.9.1.11 = STRING: "0.0"
 >> iso.3.6.1.4.1.171.11.153.1000.22.1.1.9.1.12 = STRING: "0.0"
->> iso.3.6.1.4.1.171.11.153.1000.22.1.1.9.1.13 = STRING: "0.0"
->> iso.3.6.1.4.1.171.11.153.1000.22.1.1.9.1.14 = STRING: "0.0"
->> iso.3.6.1.4.1.171.11.153.1000.22.1.1.9.1.15 = STRING: "0.0"
->> iso.3.6.1.4.1.171.11.153.1000.22.1.1.9.1.16 = STRING: "0.0"
->> iso.3.6.1.4.1.171.11.153.1000.22.1.1.9.1.17 = STRING: "0.0"
->> iso.3.6.1.4.1.171.11.153.1000.22.1.1.9.1.18 = STRING: "0.0"
->> iso.3.6.1.4.1.171.11.153.1000.22.1.1.9.1.19 = STRING: "0.0"
->> iso.3.6.1.4.1.171.11.153.1000.22.1.1.9.1.20 = STRING: "0.0"
->> iso.3.6.1.4.1.171.11.153.1000.22.1.1.9.1.21 = STRING: "0.0"
->> iso.3.6.1.4.1.171.11.153.1000.22.1.1.9.1.22 = STRING: "0.0"
->> iso.3.6.1.4.1.171.11.153.1000.22.1.1.9.1.23 = STRING: "0.0"
->> iso.3.6.1.4.1.171.11.153.1000.22.1.1.9.1.24 = STRING: "0.0"
 ```
 
-The reply consists of one line for every switch port. Here, we use a 24-port
+The reply consists of one line for every switch port. Here, we use a 12-port
 D-Link switch with one raspberry connected to the port 8.
 
 The SNMP answers can be a STRING (like in the above example) or an INTEGER. In
-this case, the integer value expressed the power as milliwatts.
+this case, the integer value expressed the power as milliwatts as follows:
+```
+iso.3.6.1.4.1.3955.1000.201.108.1.1.5.1.49 = INTEGER: 0
+iso.3.6.1.4.1.3955.1000.201.108.1.1.5.1.50 = INTEGER: 0
+iso.3.6.1.4.1.3955.1000.201.108.1.1.5.1.51 = INTEGER: 0
+iso.3.6.1.4.1.3955.1000.201.108.1.1.5.1.52 = INTEGER: 0
+iso.3.6.1.4.1.3955.1000.201.108.1.1.5.1.53 = INTEGER: 0
+iso.3.6.1.4.1.3955.1000.201.108.1.1.5.1.54 = INTEGER: 0
+iso.3.6.1.4.1.3955.1000.201.108.1.1.5.1.55 = INTEGER: 0
+iso.3.6.1.4.1.3955.1000.201.108.1.1.5.1.56 = INTEGER: 2700
+```
 
-We have to fill the switch information with this OID by updating the
+In the above example, only one Raspberry is connected to the port 8. Its power
+consumption is 2.7 W.
+
+We have to fill the switch information with the right OID by updating the
 information in the SQLite database or using the *Switch* panel of the
 *piseduce_webui*.
 

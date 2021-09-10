@@ -19,6 +19,14 @@ can be used as the resource manager but, if the number of concurrent deployments
 web interface could be slowed. So, we prefer install the two projects on a Raspberry Pi 4 with 4 Go
 of memory. This Raspberry is called the pimaster.
 
+In this article, we describe the installation of the resource manager on a
+Raspberry Pi 4. The two projects (*piseduce_agent* and *piseduce_webui*) will be
+installed on the same Raspberry. We perform this installation from the PiSeduce
+image available on our download server (links below). However, the installation
+of the resource management from a fresh debian operating system is also
+possible. The whole process is described in this
+[article](/2021-07-26-manager-install-from-scratch).
+
 ### Resource Manager Installation
 To install the pimaster, the easy way is to download the PiSeduce image ([ARMHF
 32bit](http://dl.seduce.fr/raspberry/piseduce/piseduce-armhf-28-juil-2021.img.tar.gz) or [ARM64
@@ -31,9 +39,6 @@ md5sum piseduce-armhf-28-juil-2021.img.tar.gz
 tar xvf piseduce-armhf-28-juil-2021.img.tar.gz
 dd if=piseduce-armhf-28-juil-2021.img of=/dev/sdb bs=4M conv=fsync
 ```
-
-The longest way to install the pimaster is to install the manager from a fresh raspbian operating
-system by following this [article](/2021-07-26-manager-install-from-scratch).
 
 The default network configuration of the PiSeduce cluster is to use the pimaster as a gateway
 between an existing network with internet access and the private network 48.48.0.0/24 including the
@@ -204,22 +209,35 @@ To register switches, the following fields are required:
 * the SNMP **community** to query the switch (e.g., *pi-mgnt*)
 * the **master_port** is the port of the switch that is connected to the pimaster. As this port
   provides the power supply to the pimaster, it can not be turned off.
-* the **poe_oid** is the SNMP OID of the PoE port number one. The OIDs are described in the
-  MiB provided by the switch manufacturer. More details about OID can be found in this
+* the **poe_oid** is the SNMP OID to turn off/on the PoE port number one. The
+  OIDs are described in the MiB provided by the switch manufacturer. More
+  details about OID can be found in this
   [article](/2021-07-19-prepare-the-switch/).
 * the **power_oid** is the SNMP OID to retrieve the power consumption of the PoE
   port number one. The OIDs are described in the MiB provided by the switch
   manufacturer. More details about OID can be found in this
   [article](/2021-07-19-prepare-the-switch/).
 
-If we do not know the OID of the first PoE port, we can try the following `snmpwalk` command (with
-192.0.0.3 as the switch IP):
+Here, a list of the OID of the first PoE port that we already know:
+
+| Switch Manufacturer   |    OID to turn off/on the first PoE port    |    OID to retrieve the power of the first port    |
+| --------------------- | ------------------------------------------- | --------------------------------------------------|
+| D-Link                |       1.3.6.1.2.1.105.1.1.1.3.1.1           |      1.3.6.1.4.1.171.11.153.1000.22.1.1.9.1.1     |
+| Linksys               |       1.3.6.1.2.1.105.1.1.1.3.1.49          |      1.3.6.1.4.1.3955.1000.201.108.1.1.5.1.49     |
+| --------------------- | ------------------------------------------- | --------------------------------------------------|
+
+If we do not know the OID to turn off/on the first PoE port, we can try the
+following `snmpwalk` command (with 192.0.0.3 as the switch IP):
 ```
 snmpwalk -v2c -c pi-mgnt 192.0.0.3 1.3.6.1.2.1.105.1.1.1.3
 ```
-If the number of OIDs in the answer is equal to the number of ports and the value of every OID is 1
-or 2, the OID of the first PoE port is the first OID of the answer. For example, the answer of the
-previous command with a Linksys LGS308P switch is:
+**IMPORTANT**: To run the `snmpwalk` command, we remove the two last numbers of
+the OID.
+
+If the number of OIDs in the answer is equal to the number of ports and the
+value of every OID is 1 or 2, the OID to turn off/on first PoE port is the first
+OID of the answer. For example, the answer of the previous command with a
+Linksys LGS308P switch is:
 ```
 iso.3.6.1.2.1.105.1.1.1.3.1.49 = INTEGER: 1
 iso.3.6.1.2.1.105.1.1.1.3.1.50 = INTEGER: 2
@@ -232,51 +250,69 @@ iso.3.6.1.2.1.105.1.1.1.3.1.56 = INTEGER: 1
 ```
 So, the **poe_port** value is *iso.3.6.1.2.1.105.1.1.1.3.1.49*.
 
-Here, a list of the OID of the first PoE port that we already know:
-
-| Switch Manufacturer   | OID of the first PoE port       |    OID of the power of the first port    |
-| --------------------- | ------------------------------- | -----------------------------------------|
-| D-Link                | 1.3.6.1.2.1.105.1.1.1.3.1.1     | 1.3.6.1.4.1.171.11.153.1000.22.1.1.9.1.1 |
-| Linksys               | 1.3.6.1.2.1.105.1.1.1.3.1.49    | 1.3.6.1.4.1.3955.1000.201.108.1.1.5.1.49 |
-| --------------------- | ------------------------------- | -----------------------------------------|
-
-The **power_oid** property is used to retrieve the monitoring of the electrical
-consumption of the Raspberrys. This property is only required by the monitoring
-module described [here](). If we do not activate this module, we can set this
-property to *none*.
+The **power_oid** property is used to monitor the electrical consumption of the
+Raspberrys. This property is only required by the monitoring module described
+[here](/2021-09-06-monitoring-agent). If we do not activate this module, we can
+set this property to *none*.
 
 If we do not know the OID to retrieve the power consumption of the first PoE
-port, we can try the following `snmpwalk` command (with 192.0.0.3 as the switch
-IP):
+port, we can connect only two Raspberrys on the PoE ports of the switch and turn
+on the two PoE ports with the Raspberrys. In this way, the power consumption of
+this two ports will be greater than 0 and the consumption of the other ports
+will be equal to 0. Then, we can try the following `snmpwalk` command (with
+192.0.0.3 as the switch IP):
 ```
-snmpwalk -v2c -c pi-mgnt 192.0.0.3 1.3.6.1.4.1.171.11.153.1000.22.1.1.9
+snmpwalk -v2c -c pi-mgnt 192.0.0.3 1.3.6.1.4.1.3955.1000.201.108.1.1.5
 ```
-If the number of OIDs in the answer is equal to the number of ports and the
-value of every OID is a STRING, then the value of the **power_oid** property is
-the OID of the first line. For example, the result of the previous command with
-a Linksys LGS308P switch is :
+**IMPORTANT**: To run the `snmpwalk` command, we remove the two last numbers of
+the OID.
+
+If the number of OIDs in the answer is equal to the number of ports and only two
+values of this OID are not equal to 0, then the value of the **power_oid**
+property is the OID of the first line. For example, the result of the previous
+command with a Linksys LGS308P switch is :
 ```
-iso.3.6.1.2.1.105.1.1.1.3.1.49 = STRING: "0.0"
-iso.3.6.1.2.1.105.1.1.1.3.1.50 = STRING: "0.0"
-iso.3.6.1.2.1.105.1.1.1.3.1.51 = STRING: "0.0"
-iso.3.6.1.2.1.105.1.1.1.3.1.52 = STRING: "0.0"
-iso.3.6.1.2.1.105.1.1.1.3.1.53 = STRING: "4.3"
-iso.3.6.1.2.1.105.1.1.1.3.1.54 = STRING: "0.0"
-iso.3.6.1.2.1.105.1.1.1.3.1.55 = STRING: "0.0"
-iso.3.6.1.2.1.105.1.1.1.3.1.56 = STRING: "0.0"
+iso.3.6.1.4.1.3955.1000.201.108.1.1.5.1.49 = INTEGER: 0
+iso.3.6.1.4.1.3955.1000.201.108.1.1.5.1.50 = INTEGER: 0
+iso.3.6.1.4.1.3955.1000.201.108.1.1.5.1.51 = INTEGER: 3200 
+iso.3.6.1.4.1.3955.1000.201.108.1.1.5.1.52 = INTEGER: 0
+iso.3.6.1.4.1.3955.1000.201.108.1.1.5.1.53 = INTEGER: 0
+iso.3.6.1.4.1.3955.1000.201.108.1.1.5.1.54 = INTEGER: 0
+iso.3.6.1.4.1.3955.1000.201.108.1.1.5.1.55 = INTEGER: 0
+iso.3.6.1.4.1.3955.1000.201.108.1.1.5.1.56 = INTEGER: 2600
 ```
 
-The power consumption is expressed in Watt. In our example, only fifth port is
-turned on. The other PoE ports are turned off or no Raspberrys are plugged on
-them because their consumption is 0 W. To test this command, we can connect a
-Raspberry to a PoE port and enable the PoE of this port from the switch web
-interface. The value of the SNMP command should be shown non-zero consumption of
-the used port.
+The power consumption is expressed in milliwatt. In our example, the third port and
+the eighth port are turned on. The other PoE ports are turned off or no
+Raspberrys are plugged on them because their consumption is 0 W.
 
-After clicking the *Add* button, the switch appears in the *Existing switchs* section. The number of
-ports of the switch should be equal to the value of the *Port_nb* property. If the number of
-detected ports is wrong, the OID of first port is probably wrong too. Delete the switch and try to
-fix the issue by modifying the **poe_oid** value.
+**NOTE**: Usually, the port consumption can be monitored from the web interface
+of the switch.
+
+Depending on the switch, the power consumption could be expressed in watt. In
+this case, the OID values are STRING. For example, the result of the `snmpwalk`
+command on our D-Link switch is:
+```
+iso.3.6.1.4.1.171.11.153.1000.22.1.1.9.1.1 = STRING: "0.0"
+iso.3.6.1.4.1.171.11.153.1000.22.1.1.9.1.2 = STRING: "0.0"
+iso.3.6.1.4.1.171.11.153.1000.22.1.1.9.1.3 = STRING: "0.0"
+iso.3.6.1.4.1.171.11.153.1000.22.1.1.9.1.4 = STRING: "0.0"
+iso.3.6.1.4.1.171.11.153.1000.22.1.1.9.1.5 = STRING: "0.0"
+iso.3.6.1.4.1.171.11.153.1000.22.1.1.9.1.6 = STRING: "0.0"
+iso.3.6.1.4.1.171.11.153.1000.22.1.1.9.1.7 = STRING: "0.0"
+iso.3.6.1.4.1.171.11.153.1000.22.1.1.9.1.8 = STRING: "4.1"
+iso.3.6.1.4.1.171.11.153.1000.22.1.1.9.1.9 = STRING: "0.0"
+[...]
+```
+
+Here, only the port 8 is turned on. Its consumption is 4.1 W.
+
+After filling out the switch form, we click on the *Add* button. The switch
+appears in the *Existing switchs* section. The number of ports of the switch
+should be equal to the value of the *Port_nb* property. If the number of
+detected ports is wrong, the OID of first port to turn off/on the Raspberry is
+probably wrong too. We must delete the switch and try to fix the issue by
+modifying the **poe_oid** value.
 
 The *first_ip* column of the *Existing Switch* table defines the last digit of the IP address of
 the Raspberry connected to the first port of the switch. For example, if the *first_ip* property is
@@ -293,25 +329,47 @@ the selected switch. The available operations are:
   succeeds, the detected Raspberrys are added to the resource manager.
 
 #### Raspberry Registration
-The registration of Raspberrys is the final step to add them to the resource manager. This
-registration can be done manually from the node page or from the switch page (recommended).
+The registration of Raspberrys is the final step to add them to the resource
+manager. This registration can be done from the switch page (recommended) or,
+manually, from the node page.
+
+**Registration from the switch page (recommended)**
+
+[![alt Resource Manager Switch Page](/img/switch_page.png# bordered)](/img/switch_page.png){:target="_blank"}
+
+From the switch page, the *Detect Nodes* reconfiguration of the *Switch
+Management* section allows to register the Raspberrys. During this process, the
+Raspberry will reboot many times to retrieve all the required information. This
+process should be take 2 minutes per Raspberry.
+
+To start the detection process, tick the squares associated to the ports
+connected to the Raspberrys, select the *Detect Nodes* reconfiguration and click
+on the *Execute* button. A text area will open to show the log of the process.
+**Do not refresh the page or execute another reconfiguration during the *Detect
+Nodes* process**. At the end of the reconfiguration, the Raspberry names should
+be shown in the switch table close to the port numbers. The Raspberry names are
+composed of the name of the agent followed by the last digit of the IP address.
+
+**Registration from the node page (manually)**
 
 [![alt Resource Manager Node Page](/img/node_page.png# bordered)](/img/node_page.png){:target="_blank"}
 
 To manually registrer Raspberrys as nodes, the following fields are required:
-* the **ip** of the Raspberry is provided by the DHCP server of the pimaster. If we manually
-  register Raspberrys, we have to take care of properly configuring IP addresses.
-* the **model** of the Raspberry is used by the agent executor to execute specific reconfigurations
-  that depend of the Raspberry hardware. The supported model values are: *RPI3B+1G*, *RPI4B1G*,
-  *RPI4B2G*, *RPI4B4G*, *RPI4B8G*.
+* the **ip** of the Raspberry is provided by the DHCP server of the pimaster. If
+  we manually register Raspberrys, we have to take care of properly configuring
+  IP addresses.
+* the **model** of the Raspberry is used by the agent executor to execute
+  specific reconfigurations that depend of the Raspberry hardware. The supported
+  model values are: *RPI3B+1G*, *RPI4B1G*, *RPI4B2G*, *RPI4B4G*, *RPI4B8G*.
 * the **name** of the Raspberry is a unique identifier.
-* the **port_number** is the number of the PoE port connected to the raspberry. This switch port will
-  be turned off/on to manage the associated Raspberry.
-* the **serial** is used during the PXE boot process. This identifier is a key property to
-  successfully boot Raspberrys from the NFS server hosted in the pimaster.
+* the **port_number** is the number of the PoE port connected to the raspberry.
+  This switch port will be turned off/on to manage the associated Raspberry.
+* the **serial** is used during the PXE boot process. This identifier is a key
+  property to successfully boot Raspberrys from the NFS server hosted in the
+  pimaster.
 
-Both the **model** and the **serial** values used to configure Raspberrys can be obtained from the
-terminal of the Raspbian OS.
+Both the **model** and the **serial** values used to configure Raspberrys can be
+obtained from the terminal of the Raspbian OS.
 
 To get the **model** of the Raspberry, we need the *Revision Code*: `cat /proc/cpuinfo | grep
 Revision`. Then, we refer to the last table of this
@@ -322,17 +380,6 @@ to know the Raspberry model. The resource manager **model** identifiers are: *RP
 To get the **serial** of the Raspberry, we use the following command: `cat /proc/cpuinfo | grep
 "Serial" | awk '{print substr( $3, length($3) - 7, length($3))}'`. The **serial** is a 8 hexadecimal
 digit string.
-
-From the switch page, the operation *Detect Nodes* of the *Switch Management* section allows to
-register the Raspberrys. During this process, the Raspberry will reboot many times to retrieve all
-the required information. This operation should be take 2 minutes per Raspberry.
-
-To start the detection process, tick the squares associated to the ports connected to the
-Raspberrys, select the *Detect Nodes* operation and click on the *Execute* button. A text area will
-open to show the log of the operation. **Do not refresh the page or execute another reconfiguration
-during the *Detect Nodes* process**. At the end of the operation, the Raspberry names should be
-shown in the switch table close to the port numbers. The Raspberry names are composed of the name of
-the agent followed by the last digit of the IP address.
 
 To check that the Raspberrys are available to all users, we go to the reserve page. The
 configured Raspberrys should be displayed in the *Available Nodes* section as shown in the picture
