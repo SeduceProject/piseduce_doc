@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Monitoring Raspberry Power Consumption
-subtitle: Switch Monitoring Agent Installation
+subtitle: Power Monitoring Agent Installation
 category: Administration
 index: 12
 ---
@@ -10,12 +10,12 @@ To provide power for the Raspberrys, we use the PoE technology of the switches.
 Thanks to the PoE ports, we can easily turn off or turn on the Raspberrys from
 SNMP commands sent to the switches. Another interesting feature is the power
 monitoring of the PoE ports in order to know the power consumption of the
-Raspberrys. In this article, we described the *agent_monitoring* module of the
+Raspberrys. In this article, we described the *agent_power* module of the
 *piseduce_agent* project. This module enables to monitor the power consumption
-of the PoE ports. Then, the monitoring data is available from the *Switch
+of the PoE ports. Then, the monitoring data is available from the *Power
 Monitoring* panel of the *piseduce_webui* project.
 
-The *agent_monitoring* module use a InfluxDB database. So, we must install
+The *agent_power* module use a InfluxDB database. So, we must install
 influxdb on the agent:
 ```
 apt install influxdb influxdb-client
@@ -30,7 +30,7 @@ Then we restart the influxdb service:
 ```
 service influxdb restart
 ```
-The *agent_monitoring* module sends SNMP commands to the switch in order to
+The *agent_power* module sends SNMP commands to the switch in order to
 retrieve the power consumption of the PoE ports. So, we have to know the OID to
 retrieve these values (OID are dependent on the switch manufacturer). For our
 switches, we have the following OIDs:
@@ -62,11 +62,11 @@ snmpwalk -v2c -c private 192.0.0.4 1.3.6.1.4.1.171.11.153.1000.22.1.1.9
 >> iso.3.6.1.4.1.171.11.153.1000.22.1.1.9.1.12 = STRING: "0.0"
 ```
 
-The reply consists of one line for every switch port. Here, we use a 12-port
-D-Link switch with one raspberry connected to the port 8.
+The reply consists of one line per switch port. In the above example, we use a
+12-port D-Link switch with one raspberry connected to the port 8.
 
-The SNMP answers can be a STRING (like in the above example) or an INTEGER. In
-this case, the integer value expressed the power as milliwatts as follows:
+The SNMP answers can be STRING (like in the above example) or INTEGER. In this
+case, the integer value expressed the power as milliwatts as follows:
 ```
 iso.3.6.1.4.1.3955.1000.201.108.1.1.5.1.49 = INTEGER: 0
 iso.3.6.1.4.1.3955.1000.201.108.1.1.5.1.50 = INTEGER: 0
@@ -102,14 +102,14 @@ switch information in a notebook. Then, we delete the switch by clicking the
 previously noted information and the whole OID
 *1.3.6.1.4.1.3955.1000.201.108.1.1.5.1.49* in the **power_oid** field.
 
-To easily manage the *agent_monitoring* module, we create a systemD service:
+To easily manage the *agent_power* module, we create a systemD service:
 ```
-cp admin/agent_monitoring.service /etc/systemd/system/
-systemctl enable agent_monitoring.service
-service agent_monitoring start
+cp admin/agent_power.service /etc/systemd/system/
+systemctl enable agent_power.service
+service agent_power start
 ```
 
-Now, the *agent_monitoring* module writes to the influxDB database the power
+Now, the *agent_power* module writes to the influxDB database the power
 consumption of all switch ports. We can check the database with the following
 command:
 ```
@@ -121,9 +121,9 @@ SELECT * FROM power_W WHERE time > now() - 10s  AND switch = 'RPI3_SW';
 EXIT
 ```
 
-The monitoring data is available from the *Switch Monitoring* panel of the
+The monitoring data is available from the *Power Monitoring* panel of the
 *piseduce_webui* or from GET requests without authentication. The URL of the GET
-requests is /user/monitoring/get/*agent_name*/*switch_name*/*period* where:
+requests is /user/powermonitoring/get/*agent_name*/*switch_name*/*period* where:
 * **agent_name** is the name of the agent set in the *piseduce_webui* interface
 * **switch_name** is the name of the switch set in the *piseduce_webui* interface
 * **period** defines the time slot of the monitoring data. This string uses the
@@ -136,7 +136,7 @@ In the following example, we send our request to the *piseduce_webui* with the
 `wget` command. We retrieve the monitoring data of the switch *RPI4_SW* for the
 last two hours. The *RPI4_SW* is managed by the *imt* agent:
 ```
-wget http://192.0.0.6:9000/user/monitoring/get/imt/RPI4_SW/2h -O monitoring.json
+wget http://192.0.0.6:9000/user/powermonitoring/get/imt/RPI4_SW/2h -O monitoring.json
 ```
 With this command, the data is stored in the JSON file *monitoring.json*.
 
