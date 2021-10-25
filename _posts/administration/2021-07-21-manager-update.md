@@ -7,8 +7,8 @@ index: 9
 ---
 
 The PiSeduce resource manager consists of two projects: the
-[piseduce_webui](http://github.com/remyimt/piseduce_webui){:target="_blank"} and the
-[piseduce_agent](http://github.com/remyimt/piseduce_agent){:target="_blank"}. These two projects are
+[piseduce_webui](http://github.com/seduceproject/piseduce_webui){:target="_blank"} and the
+[piseduce_agent](http://github.com/seduceproject/piseduce_agent){:target="_blank"}. These two projects are
 available on Github, and so, they can be updated by running the `git pull` command.
 
 Although these projects are independent, it is important to update the two projects at the same time

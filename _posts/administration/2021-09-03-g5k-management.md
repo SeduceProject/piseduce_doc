@@ -20,7 +20,7 @@ sensors at the same time.
 To connect the agent to the Grid5000 infrastructure, we start by getting the
 piseduce_agent from the github repository:
 ```
-git clone http://github.com/remyimt/piseduce_agent
+git clone http://github.com/seduceproject/piseduce_agent
 ```
 
 Then, we modify the configuration file `config_agent.json`. We change the

@@ -51,9 +51,9 @@ sqlite3 test-ui.db
 
 From the sources, the description of the database tables is in the `database/tables.py` file of each
 project directory. The sources are also available from GitHub:
-* [tables.py](https://github.com/remyimt/piseduce_webui/blob/master/database/tables.py){:target="_blank"}
+* [tables.py](https://github.com/seduceproject/piseduce_webui/blob/master/database/tables.py){:target="_blank"}
   of the piseduce_webui project.
-* [tables.py](https://github.com/remyimt/piseduce_agent/blob/master/database/tables.py){:target="_blank"}
+* [tables.py](https://github.com/seduceproject/piseduce_agent/blob/master/database/tables.py){:target="_blank"}
   of the piseduce_agent project.
 
 To create the databases of both the piseduce_webui project and the piseduce_agent project, the

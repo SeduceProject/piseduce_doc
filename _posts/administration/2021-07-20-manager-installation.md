@@ -8,9 +8,9 @@ index: 4
 
 After configuring the PoE switch and the Raspberrys, the next step is to install the PiSeduce
 resource manager. The resource manager consists of two projects:
-* the [piseduce_webui](http://github.com/remyimt/piseduce_webui){:target="_blank"} project runs the
+* the [piseduce_webui](http://github.com/seduceproject/piseduce_webui){:target="_blank"} project runs the
   web interface (webUI) of the manager.
-* the [piseduce_agent](http://github.com/remyimt/piseduce_agent){:target="_blank"} project runs the
+* the [piseduce_agent](http://github.com/seduceproject/piseduce_agent){:target="_blank"} project runs the
   agent API service that communicates with the webUI and the agent executor that deploys
   environments on the Raspberrys to configure them.
 

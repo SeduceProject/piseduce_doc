@@ -266,8 +266,8 @@ The PiSeduce resource manager is written in Python3.7. We install Python with th
 this article so we just have to get the code from github:
 ```
 cd /root
-git clone http://github.com/remyimt/piseduce_webui
-git clone http://github.com/remyimt/piseduce_agent
+git clone http://github.com/seduceproject/piseduce_webui
+git clone http://github.com/seduceproject/piseduce_agent
 ```
 and install the Python modules by using pip3:
 ```
